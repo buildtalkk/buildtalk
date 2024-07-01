@@ -1,4 +1,5 @@
 "use client";
+import { testApi } from "@/lib/actions";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { HeroCards } from "./HeroCards";
 import { Button, buttonVariants } from "./ui/button";
@@ -25,7 +26,18 @@ export const Hero = () => {
 
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
           Build your React landing page effortlessly with the required sections
-          to your project.
+          to your project. !!!!!!!!!!!!
+        </p>
+
+        <p>
+          <Button
+            onClick={async () => {
+              console.log(await testApi());
+            }}
+            className="w-full md:w-1/3"
+          >
+            검색하기
+          </Button>
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
