@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import cubeLeg from "../assets/cube-leg.png";
 import { ChartIcon, MagnifierIcon, WalletIcon } from "./Icons";
 import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
@@ -66,8 +67,9 @@ export const Services = () => {
           </div>
         </div>
 
-        <img
+        <Image
           src={cubeLeg}
+          width={500}
           className="w-[300px] md:w-[500px] lg:w-[600px] object-contain"
           alt="About services"
         />

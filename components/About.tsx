@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import pilot from "../assets/pilot.png";
 import { Statistics } from "./Statistics";
 
@@ -7,9 +8,10 @@ export const About = () => {
     <section id="about" className="container py-24 sm:py-32">
       <div className="bg-muted/50 border rounded-lg py-12">
         <div className="px-6 flex flex-col-reverse md:flex-row gap-8 md:gap-12">
-          <img
+          <Image
             src={pilot}
             alt=""
+            width={300}
             className="w-[300px] object-contain rounded-lg"
           />
           <div className="bg-green-0 flex flex-col justify-between">
