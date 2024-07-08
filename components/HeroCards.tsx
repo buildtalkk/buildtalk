@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Check, Linkedin } from "lucide-react";
-import Image from "next/image";
 import { LightBulbIcon } from "./Icons";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
@@ -38,7 +37,8 @@ export const HeroCards = () => {
       {/* Team */}
       <Card className="absolute right-[20px] top-4 w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10">
         <CardHeader className="mt-8 flex justify-center items-center pb-2">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="https://i.pravatar.cc/150?img=58"
             alt="user avatar"
             className="absolute grayscale-[0%] -top-12 rounded-full w-24 h-24 aspect-square object-cover"
