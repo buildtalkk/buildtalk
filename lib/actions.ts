@@ -508,6 +508,7 @@ export const getBuildingInfo = async ({
     "buldSlno": "0"
 }
  */
+
 export type Juso = {
   detBdNmList: string;
   engAddr: string;
