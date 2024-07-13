@@ -1,8 +1,13 @@
 "use client";
+import { sendMessage } from "@/lib/actions";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export const Newsletter = () => {
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log("Subscribed!");
@@ -28,11 +33,26 @@ export const Newsletter = () => {
           onSubmit={handleSubmit}
         >
           <Input
-            placeholder="leomirandadev@gmail.com"
+            placeholder="buildtalkk@gmail.com"
             className="bg-muted/50 dark:bg-muted/80 "
             aria-label="email"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
           />
-          <Button>Subscribe</Button>
+          <Button
+            disabled={loading}
+            onClick={() => {
+              setLoading(true);
+              sendMessage(`${value} Subscribed!`).then(() => {
+                setValue("");
+                setLoading(false);
+                alert("성공적으로 구독되었습니다!");
+              });
+            }}
+          >
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            구독하기
+          </Button>
         </form>
       </div>
 

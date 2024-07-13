@@ -1,6 +1,4 @@
 "use client";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { Button, buttonVariants } from "./ui/button";
 import { Search } from "./ui/search";
 
 export const Hero = () => {
@@ -13,28 +11,14 @@ export const Hero = () => {
           </h1>
         </main>
 
-        <Search />
+        <div className="max-w-[500px] w-full">
+          <Search />
+        </div>
 
-        <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
+        <p className="text-xl text-muted-foreground">
           부동산 용도변경의 모든 것을{" "}
           <span className="text-blue-400">빌드톡</span>과 함께 시작하세요!
         </p>
-
-        <div className="space-y-4 md:space-y-0 md:space-x-4">
-          <Button className="w-full md:w-1/3">Get Started</Button>
-
-          <a
-            rel="noreferrer noopener"
-            href="https://github.com/leoMirandaa/shadcn-landing-page.git"
-            target="_blank"
-            className={`w-full md:w-1/3 ${buttonVariants({
-              variant: "outline",
-            })}`}
-          >
-            Github Repository
-            <GitHubLogoIcon className="ml-2 w-5 h-5" />
-          </a>
-        </div>
       </div>
 
       {/* Hero cards sections */}

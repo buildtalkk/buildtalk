@@ -1,5 +1,6 @@
 "use server";
 import { parse } from "node-html-parser";
+import TelegramBot from "node-telegram-bot-api";
 
 export const echo = async (message: string) => {
   return message;
@@ -710,4 +711,37 @@ export type Juso = {
   mtYn: string;
   bdMgtSn: string;
   buldSlno: string;
+};
+
+const token = "7221690912:AAFPODsY3u9Sd8s-qXBmL1ytU7_bMWZ9bnI"; // Replace with your own bot token
+const bot = new TelegramBot(token, { polling: true });
+// {
+//   "ok": true,
+//   "result": [
+//     {
+//       "update_id": 433643227,
+//       "message": {
+//         "message_id": 3,
+//         "from": {
+//           "id": 6705933923,
+//           "is_bot": false,
+//           "first_name": "태훈",
+//           "last_name": "김",
+//           "username": "echoya",
+//           "language_code": "en"
+//         },
+//         "chat": {
+//           "id": -1002168271331,
+//           "title": "태훈 & buildtalk-notification, 이동섭 동스리 dongslee 42",
+//           "type": "supergroup"
+//         },
+//         "date": 1720858128,
+//         "text": "test"
+//       }
+//     }
+//   ]
+// }
+
+export const sendMessage = async (text: string) => {
+  await bot.sendMessage(-1002168271331, text);
 };

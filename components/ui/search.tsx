@@ -61,6 +61,7 @@ export function Search() {
   return (
     <>
       <input
+        id="search"
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}

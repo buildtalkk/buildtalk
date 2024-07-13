@@ -14,10 +14,8 @@ import {
 } from "@/components/ui/sheet";
 import { useState } from "react";
 
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Menu } from "lucide-react";
 import { LogoIcon } from "./Icons";
-import { ModeToggle } from "./mode-toggle";
 import { buttonVariants } from "./ui/button";
 
 interface RouteProps {
@@ -27,20 +25,20 @@ interface RouteProps {
 
 const routeList: RouteProps[] = [
   {
-    href: "#features",
-    label: "Features",
+    href: "#howItWorks",
+    label: "서비스 소개",
   },
   {
-    href: "#testimonials",
-    label: "Testimonials",
-  },
-  {
-    href: "#pricing",
-    label: "Pricing",
+    href: "https://naver.com",
+    label: "건축 상담하기",
   },
   {
     href: "#faq",
-    label: "FAQ",
+    label: "자주 하는 질문",
+  },
+  {
+    href: "/change",
+    label: "용도변경이란",
   },
 ];
 
@@ -63,8 +61,6 @@ export const Navbar = () => {
 
           {/* mobile */}
           <span className="flex md:hidden">
-            <ModeToggle />
-
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger className="px-2">
                 <Menu
@@ -78,7 +74,7 @@ export const Navbar = () => {
               <SheetContent side={"left"}>
                 <SheetHeader>
                   <SheetTitle className="font-bold text-xl">
-                    Shadcn/React
+                    BuildTalk
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col justify-center items-center gap-2 mt-4">
@@ -88,12 +84,13 @@ export const Navbar = () => {
                       key={label}
                       href={href}
                       onClick={() => setIsOpen(false)}
+                      target={href.startsWith("http") ? "_blank" : undefined}
                       className={buttonVariants({ variant: "ghost" })}
                     >
                       {label}
                     </a>
                   ))}
-                  <a
+                  {/* <a
                     rel="noreferrer noopener"
                     href="https://github.com/leoMirandaa/shadcn-landing-page.git"
                     target="_blank"
@@ -103,7 +100,7 @@ export const Navbar = () => {
                   >
                     <GitHubLogoIcon className="mr-2 w-5 h-5" />
                     Github
-                  </a>
+                  </a> */}
                 </nav>
               </SheetContent>
             </Sheet>
@@ -124,20 +121,6 @@ export const Navbar = () => {
               </a>
             ))}
           </nav>
-
-          <div className="hidden md:flex gap-2">
-            <a
-              rel="noreferrer noopener"
-              href="https://github.com/leoMirandaa/shadcn-landing-page.git"
-              target="_blank"
-              className={`border ${buttonVariants({ variant: "secondary" })}`}
-            >
-              <GitHubLogoIcon className="mr-2 w-5 h-5" />
-              Github
-            </a>
-
-            <ModeToggle />
-          </div>
         </NavigationMenuList>
       </NavigationMenu>
     </header>

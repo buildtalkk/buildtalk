@@ -22,6 +22,7 @@
     "lucide-react": "^0.397.0",
     "next": "15.0.0-rc.0",
     "node-html-parser": "^6.1.13",
+    "node-telegram-bot-api": "^0.66.0",
     "react": "19.0.0-rc-58af67a8f8-20240628",
     "react-dom": "19.0.0-rc-58af67a8f8-20240628",
     "tailwind-merge": "^2.3.0",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/node-telegram-bot-api": "^0.64.7",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
