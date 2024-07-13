@@ -1,50 +1,24 @@
 "use client";
 
+import { useDebounce } from "@/hooks/useDebounce";
 import { Juso, searchAddress } from "@/lib/actions";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-
-export function useThrottle(value: string, interval = 500) {
-  const [throttledValue, setThrottledValue] = useState(value);
-  const lastUpdated = useRef<number | null>(null);
-
-  useEffect(() => {
-    const now = Date.now();
-
-    if (lastUpdated.current && now >= lastUpdated.current + interval) {
-      lastUpdated.current = now;
-      setThrottledValue(value);
-    } else {
-      const id = window.setTimeout(() => {
-        lastUpdated.current = now;
-        setThrottledValue(value);
-      }, interval);
-
-      return () => window.clearTimeout(id);
-    }
-  }, [value, interval]);
-
-  return throttledValue;
-}
+import { useEffect, useState } from "react";
 
 export function Search() {
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<Juso[]>([]);
   const router = useRouter();
-  const throttledValue = useThrottle(search);
-
-  // useEffect(() => {
-  //   console.log("throttledValue", throttledValue);
-  // }, [throttledValue]);
+  const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
-    searchAddress(search).then((jusos) => {
+    searchAddress(debouncedSearch).then((jusos) => {
       console.log("jusos", jusos);
-      if (jusos) {
+      if (jusos && jusos.length > 0) {
         setSearchResults(jusos);
       }
     });
-  }, [search]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     console.log("searchResults", searchResults);
@@ -76,6 +50,10 @@ export function Search() {
 
     searchParams.set("bun", bun);
     searchParams.set("ji", ji);
+
+    searchParams.set("admCd", juso.admCd);
+    searchParams.set("lnbrMnnm", juso.lnbrMnnm);
+    searchParams.set("lnbrSlno", juso.lnbrSlno);
 
     router.push(`/result?${searchParams.toString()}`);
   };
@@ -125,63 +103,5 @@ export function Search() {
         ) : null}
       </div>
     </>
-
-    // <Command className="max-w-[500px] [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-    //   <CommandInput
-    //     value={search}
-    //     placeholder="주소를 입력해 주세요."
-    //     onValueChange={setSearch}
-    //   />
-    //   <CommandList>
-    //     {searchResults.length > 0 ? (
-    //       <CommandGroup>
-    //         {searchResults.map((juso) => (
-    //           <CommandItem
-    //             key={juso.bdMgtSn}
-    //             value={juso.jibunAddr}
-    //             onSelect={(e) => console.log(e)}
-    //             onClick={(e) => console.log("click", e)}
-    //           >
-    //             {juso.jibunAddr}
-    //           </CommandItem>
-    //         ))}
-    //       </CommandGroup>
-    //     ) : null}
-    //     {}
-    //     {/* <CommandEmpty>No results found.</CommandEmpty> */}
-    //     {/* <CommandGroup heading="Suggestions">
-    //       <CommandItem>
-    //         <Calendar className="mr-2 h-4 w-4" />
-    //         <span>Calendar</span>
-    //       </CommandItem>
-    //       <CommandItem>
-    //         <Smile className="mr-2 h-4 w-4" />
-    //         <span>Search Emoji</span>
-    //       </CommandItem>
-    //       <CommandItem>
-    //         <Calculator className="mr-2 h-4 w-4" />
-    //         <span>Calculator</span>
-    //       </CommandItem>
-    //     </CommandGroup> */}
-    //     {/* <CommandSeparator /> */}
-    //     {/* <CommandGroup heading="Settings">
-    //       <CommandItem>
-    //         <User className="mr-2 h-4 w-4" />
-    //         <span>Profile</span>
-    //         <CommandShortcut>⌘P</CommandShortcut>
-    //       </CommandItem>
-    //       <CommandItem>
-    //         <CreditCard className="mr-2 h-4 w-4" />
-    //         <span>Billing</span>
-    //         <CommandShortcut>⌘B</CommandShortcut>
-    //       </CommandItem>
-    //       <CommandItem>
-    //         <Settings className="mr-2 h-4 w-4" />
-    //         <span>Settings</span>
-    //         <CommandShortcut>⌘S</CommandShortcut>
-    //       </CommandItem>
-    //     </CommandGroup> */}
-    //   </CommandList>
-    // </Command>
   );
 }

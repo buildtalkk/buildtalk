@@ -1,22 +1,94 @@
 "use server";
+import { parse } from "node-html-parser";
 
 export const echo = async (message: string) => {
   return message;
 };
+/**
+ * Juso
+ * "admCd": "1162010200",
+ * "lnbrMnnm": "1633",
+ * "lnbrSlno": "25",
 
-export const testApi = async () => {
+    to
+
+ * selSido=11
+ * selSgg=620
+ * selUmd=0102
+ * selRi=00
+ * landGbn=1
+ * bobn=1633
+ * bubn=25
+ * sggcd=
+ * isNoScr=script
+ * mode=search
+ * selGbn=umd
+ * s_type=1
+ * add=land
+ * pnu=1162010200116330025
+ */
+export const get용적률건폐율 = async (juso: {
+  admCd: string;
+  lnbrMnnm: string;
+  lnbrSlno: string;
+}) => {
+  // 1. http://www.eum.go.kr/web/ar/lu/luLandDet.jsp 에 요청 날려서 ucodes 등등을 가져오기
+
+  const search = new URLSearchParams();
+  search.set("selSido", juso.admCd.slice(0, 2));
+  search.set("selSgg", juso.admCd.slice(2, 5));
+  search.set("selUmd", juso.admCd.slice(5, 8).padStart(4, "0"));
+  search.set("selRi", juso.admCd.slice(8, 10));
+  search.set("landGbn", "1");
+  search.set("bobn", juso.lnbrMnnm);
+  search.set("bubn", juso.lnbrSlno);
+  search.set("sggcd", "");
+  search.set("isNoScr", "script");
+  search.set("mode", "search");
+  search.set("selGbn", "umd");
+  search.set("s_type", "1");
+  search.set("add", "land");
+  search.set(
+    "pnu",
+    `${juso.admCd}1${juso.lnbrMnnm.padStart(4, "0")}${juso.lnbrSlno.padStart(
+      4,
+      "0"
+    )}`
+  );
+
   const res = await fetch(
-    "https://business.juso.go.kr/addrlink/addrLinkApi.do?confmKey=U01TX0FVVEgyMDI0MDcwMTIxNTEwNzExNDg3NzA=&currentPage=1&countPerPage=100&keyword=삼성동&resultType=json"
-  );
-  const data = await res.json();
-
-  // do something
-  const res2 = await fetch(
-    "http://apis.data.go.kr/1613000/BldRgstService_v2/getBrFlrOulnInfo?sigunguCd=11140&bjdongCd=16200&bun=0369&ji=0035&ServiceKey=oQa0u9ZYG7As2ub9ooGMnPoZyjWjj%2Fea01flLcbJXI0XUTWzmqoK5kpK1laeof6FCmVRvSwVtFs4VNc%2Fz6SK7w%3D%3D&_type=json"
+    `http://www.eum.go.kr/web/ar/lu/luLandDet.jsp?${search.toString()}`
   );
 
-  const data2 = await res2.json();
-  return { data, data2 };
+  const html = await res.text();
+
+  const root = parse(html);
+  const pnu = root.querySelector("#pnu")?.getAttribute("value") ?? "";
+  const ucodes = root.querySelector("#ucodes")?.getAttribute("value") ?? "";
+  const sggcd = root.querySelector("#sggcd")?.getAttribute("value") ?? "";
+
+  const search2 = new URLSearchParams();
+  search2.set("pnu", pnu);
+  search2.set("ucodes", ucodes);
+  search2.set("sggcd", sggcd);
+  search2.set("carGbn", "GY");
+
+  // 2. http://www.eum.go.kr/web/ar/lu/luLandDetUseGYAjax.jsp 에 요청하여 건폐율, 용적률 가져오기
+  const luLandDetUseGYAjaxRes = await fetch(
+    `http://www.eum.go.kr/web/ar/lu/luLandDetUseGYAjax.jsp?${search2.toString()}`
+  );
+
+  const luLandDetUseGYAjaxHtml = await luLandDetUseGYAjaxRes.text();
+
+  const root2 = parse(luLandDetUseGYAjaxHtml);
+  const gun = (
+    root2.querySelector("#gun_basic_UQA121")?.getAttribute("value") ?? ""
+  ).trim();
+  const yong = (
+    root2.querySelector("#yong_basic_UQA121")?.getAttribute("value") ?? ""
+  ).trim();
+
+  return JSON.stringify({ gun, yong });
 };
 
 export const searchAddress = async (keyword: string) => {
@@ -27,6 +99,7 @@ export const searchAddress = async (keyword: string) => {
     `https://business.juso.go.kr/addrlink/addrLinkApi.do?confmKey=U01TX0FVVEgyMDI0MDcwMTIxNTEwNzExNDg3NzA=&currentPage=1&countPerPage=5&keyword=${keyword}&resultType=json`
   );
   const data = (await res.json()) as { results: { juso: Juso[] } };
+
   return data.results.juso;
 };
 
@@ -481,7 +554,7 @@ export const getBuildingInfo = async ({
  */
 
 /**
- * {
+ * 1.{
     "detBdNmList": "301동, 304동, 303동, 302동",
     "engAddr": "629 Samseong-ro, Gangnam-gu, Seoul",
     "rn": "삼성로",
@@ -505,8 +578,111 @@ export const getBuildingInfo = async ({
     "rnMgtSn": "116803122005",
     "mtYn": "0",
     "bdMgtSn": "1168010500100220000015210",
+    1168010500
+    1
+    0188
+    0000
     "buldSlno": "0"
 }
+
+2.
+
+{
+    "detBdNmList": "",
+    "engAddr": "25 Munseong-ro 36-gil, Gwanak-gu, Seoul",
+    "rn": "문성로36길",
+    "emdNm": "신림동",
+    "zipNo": "08843",
+    "roadAddrPart2": " (신림동)",
+    "emdNo": "01",
+    "sggNm": "관악구",
+    "jibunAddr": "서울특별시 관악구 신림동 1633-25",
+    "siNm": "서울특별시",
+    "roadAddrPart1": "서울특별시 관악구 문성로36길 25",
+    "bdNm": "",
+    "admCd": "1162010200",
+    "udrtYn": "0",
+    "lnbrMnnm": "1633",
+    "roadAddr": "서울특별시 관악구 문성로36길 25 (신림동)",
+    "lnbrSlno": "25",
+    "buldMnnm": "25",
+    "bdKdcd": "0",
+    "liNm": "",
+    "rnMgtSn": "116204160337",
+    "mtYn": "0",
+    "bdMgtSn": "1162010200116330025020515",
+    "buldSlno": "0"
+}
+
+
+
+1. 
+
+http://www.eum.go.kr/web/ar/lu/luLandDet.jsp
+
+selSido=11
+selSgg=620
+selUmd=0102
+selRi=00
+landGbn=1
+bobn=1633
+bubn=25
+sggcd=
+isNoScr=script
+mode=search
+selGbn=umd
+s_type=1
+add=land
+pnu=1162010200116330025
+
+- selSido
+- selSgg
+- selUmd
+- selRi
+- landGbn
+- bobn
+- bubn
+- isNoScr
+- mode=search
+- selGbn=umd
+- s_type=1
+- add=land
+- pnu=….
+
+11620
+10200
+0
+1633
+0025
+
+1.
+UQA01X
+UQA121
+UMZ100
+UDX100
+UOA120
+UNE200
+UBA100
+UQQ600
+----
+2.
+UQA130
+UQQ300
+UMZ100
+UOA120
+UNE201
+UBA100
+-----
+3.
+UQA01X
+UQA123
+UMZ100
+UOA120
+UNE200
+UBA100
+
+
+
  */
 
 export type Juso = {

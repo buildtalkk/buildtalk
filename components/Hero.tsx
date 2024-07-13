@@ -1,5 +1,4 @@
 "use client";
-import { testApi } from "@/lib/actions";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Button, buttonVariants } from "./ui/button";
 import { Search } from "./ui/search";
@@ -11,37 +10,14 @@ export const Hero = () => {
         <main className="text-3xl md:text-5xl font-bold ">
           <h1 className="text-center font-bold">
             성공적인 공간창업을 위한<br></br>건축 인허가 사전 검토 솔루션
-            {/* <span className="inline bg-gradient-to-r from-[#F596D3]  to-[#D247BF] text-transparent bg-clip-text">
-              
-            </span>{" "} */}
-            {/* landing page */}
           </h1>
-          {/* {" "}
-          for{" "} */}
-          {/* <h2 className="inline">
-            <span className="inline bg-gradient-to-r from-[#61DAFB] via-[#1fc0f1] to-[#03a3d7] text-transparent bg-clip-text">
-              React
-            </span>{" "}
-            developers
-          </h2> */}
         </main>
 
         <Search />
 
         <p className="text-xl text-muted-foreground md:w-10/12 mx-auto lg:mx-0">
-          Build your React landing page effortlessly with the required sections
-          to your project. !!!!!!!!!!!!
-        </p>
-
-        <p>
-          <Button
-            onClick={async () => {
-              console.log(await testApi());
-            }}
-            className="w-full md:w-1/3"
-          >
-            검색하기
-          </Button>
+          부동산 용도변경의 모든 것을{" "}
+          <span className="text-blue-400">빌드톡</span>과 함께 시작하세요!
         </p>
 
         <div className="space-y-4 md:space-y-0 md:space-x-4">
