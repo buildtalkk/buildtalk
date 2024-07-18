@@ -154,7 +154,7 @@ export const getBuildingInfo = async ({
     getBrFlrOulnInfo,
     getBrBasisOulnInfo,
     getBrRecapTitleInfo,
-    getBrTitleInfo,
+    getBrTitleInfo: getBrTitleInfo as GetBrTitleInfo,
   };
 };
 
