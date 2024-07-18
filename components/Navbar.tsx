@@ -25,7 +25,7 @@ interface RouteProps {
 
 const routeList: RouteProps[] = [
   {
-    href: "#howItWorks",
+    href: "/#howItWorks",
     label: "서비스 소개",
   },
   {
@@ -33,7 +33,7 @@ const routeList: RouteProps[] = [
     label: "건축 상담하기",
   },
   {
-    href: "#faq",
+    href: "/#faq",
     label: "자주 하는 질문",
   },
   {
