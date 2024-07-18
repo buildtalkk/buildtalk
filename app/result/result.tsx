@@ -308,18 +308,7 @@ export const Result = () => {
       <Table title={"검토를 원하는 층을 선택해주세요"}>
         <thead className="bg-gray-50">
           <tr>
-            <th scope="col" className="py-3 ps-4">
-              <div className="flex items-center h-5">
-                <input
-                  id="hs-table-checkbox-all"
-                  type="checkbox"
-                  className="border-gray-200 rounded text-primary-600 focus:ring-primary-500 "
-                />
-                <label htmlFor="hs-table-checkbox-all" className="sr-only">
-                  Checkbox
-                </label>
-              </div>
-            </th>
+            <th scope="col" className="py-3 ps-4"></th>
             <th
               scope="col"
               className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
