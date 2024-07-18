@@ -191,3 +191,63 @@ type GetBrTitleInfoItem = {
   vlRat: number;
   vlRatEstmTotArea: number;
 };
+
+type GetBrJijiguInfo = {
+  response: {
+    header: {
+      resultCode: string;
+      resultMsg: string;
+    };
+    body: {
+      items: {
+        item: GetBrJijiguInfoItem | GetBrJijiguInfoItem[];
+      };
+      numOfRows: number;
+      pageNo: number;
+      totalCount: number;
+    };
+  };
+};
+
+type GetBrJijiguInfoItem = {
+  bjdongCd: number;
+  block: string;
+  bun: string;
+  crtnDay: number;
+  etcJijigu: string;
+  ji: string;
+  jijiguCd: string;
+  jijiguCdNm: string;
+  jijiguGbCd: number;
+  jijiguGbCdNm: string;
+  lot: string;
+  mgmBldrgstPk: string;
+  newPlatPlc: string;
+  platGbCd: number;
+  platPlc: string;
+  reprYn: number;
+  rnum: number;
+  sigunguCd: number;
+  splotNm: string;
+};
+// {
+//   "bjdongCd": 16200,
+//   "block": " ",
+//   "bun": "0340",
+//   "crtnDay": 20240415,
+//   "etcJijigu": "준주거지역",
+//   "ji": "0127",
+//   "jijiguCd": "UQA130",
+//   "jijiguCdNm": "준주거지역",
+//   "jijiguGbCd": 1,
+//   "jijiguGbCdNm": "용도지역코드",
+//   "lot": " ",
+//   "mgmBldrgstPk": "11140-100207053",
+//   "newPlatPlc": " 서울특별시 중구 다산로14길 17",
+//   "platGbCd": 0,
+//   "platPlc": "서울특별시 중구 신당동 340-127번지",
+//   "reprYn": 1,
+//   "rnum": 1,
+//   "sigunguCd": 11140,
+//   "splotNm": " "
+// }

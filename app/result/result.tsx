@@ -168,6 +168,7 @@ export const Result = () => {
     getBrBasisOulnInfo: any;
     getBrRecapTitleInfo: any;
     getBrTitleInfo: GetBrTitleInfo;
+    getBrJijiguInfo: GetBrJijiguInfo;
   } | null>(null);
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
@@ -187,8 +188,9 @@ export const Result = () => {
   }, [result]);
 
   const titleItem = result?.getBrTitleInfo.response.body.items.item;
+  const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
 
-  if (!titleItem) {
+  if (!titleItem || !jijiguItem) {
     return "loading...";
   }
 
@@ -236,7 +238,9 @@ export const Result = () => {
           <BuildingInfoTr
             title="용도지역"
             content={
-              result.getBrBasisOulnInfo.response.body.items.item.jiyukCdNm
+              Array.isArray(jijiguItem)
+                ? jijiguItem.find((item) => item.jijiguGbCd === 1)?.jijiguCdNm
+                : jijiguItem.jijiguCdNm
             }
           />
           <BuildingInfoTr
