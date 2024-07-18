@@ -362,7 +362,7 @@ export const Result = () => {
                 floorType={item.flrGbCd}
                 floor={item.flrNo}
                 checked={checkedFloors.includes(item.flrNo)}
-                area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed()}평`}
+                area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed(2)}평`}
                 purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
                 onChange={(checked) => {
                   if (checked) {
