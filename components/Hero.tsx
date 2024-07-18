@@ -17,7 +17,8 @@ export const Hero = () => {
 
         <p className="text-xl text-muted-foreground">
           부동산 용도변경의 모든 것을{" "}
-          <span className="text-blue-400">빌드톡</span>과 함께 시작하세요!
+          <span className="text-primary font-semibold">빌드톡</span>과 함께
+          시작하세요!
         </p>
       </div>
 
