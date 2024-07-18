@@ -1,9 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Search } from "@/components/ui/search";
-import { getBuildingInfo, get용적률건폐율 } from "@/lib/actions";
-import { Loader2 } from "lucide-react";
+import { getBuildingInfo } from "@/lib/actions";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -58,7 +56,7 @@ const Item: React.FC<{
   );
 };
 
-const Tr = ({
+const BuildingInfoTr = ({
   title,
   content,
 }: {
@@ -72,6 +70,85 @@ const Tr = ({
       </td>
       <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-800">
         {content}
+      </td>
+    </tr>
+  );
+};
+
+const Table = ({
+  children,
+  title,
+  className,
+}: {
+  children: React.ReactNode;
+  title: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={twMerge("flex flex-col text-left", className)}>
+      <div className="-m-1.5 overflow-x-auto ">
+        <div className="p-1.5 min-w-full inline-block align-middle">
+          <div className="border rounded-lg divide-y divide-gray-200">
+            <div className="py-3 px-4">
+              <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+            </div>
+            <div className="overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200">
+                {children}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CheckFloorTr = ({
+  floor,
+  checked,
+  area: area,
+  purpose,
+  floorType,
+  onChange,
+}: {
+  floor: number;
+  floorType: number;
+  checked: boolean;
+  area: React.ReactNode;
+  purpose: React.ReactNode;
+  onChange: (checked: boolean) => void;
+}) => {
+  const typeString =
+    floorType === 10
+      ? "지하"
+      : floorType === 20
+      ? "지상"
+      : floorType === 30
+      ? "옥탑"
+      : "";
+  return (
+    <tr>
+      <td className="py-3 ps-4">
+        <div className="flex items-center h-5">
+          <input
+            id="hs-table-checkbox-all"
+            type="checkbox"
+            className="border-gray-200 rounded text-primary-600 focus:ring-primary-500 "
+          />
+          <label htmlFor="hs-table-checkbox-all" className="sr-only">
+            Checkbox
+          </label>
+        </div>
+      </td>
+      <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-800">
+        {typeString} {floor}층
+      </td>
+      <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-800">
+        {area}
+      </td>
+      <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-800">
+        {purpose}
       </td>
     </tr>
   );
@@ -94,10 +171,12 @@ export const Result = () => {
   } | null>(null);
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
+  const [checkedFloors, setCheckedFloors] = useState<number[]>([]);
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
       getBuildingInfo({ sigunguCd, bjdongCd, bun, ji }).then((data) => {
+        console.log("data", data);
         setResult(data);
       });
     }
@@ -132,114 +211,171 @@ export const Result = () => {
         <Search />
       </div>
 
-      <div className="flex flex-col text-left">
-        <div className="-m-1.5 overflow-x-auto">
-          <div className="p-1.5 min-w-full inline-block align-middle">
-            <div className="border rounded-lg divide-y divide-gray-200">
-              <div className="py-3 px-4">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  건축물 현황
-                </h2>
-              </div>
-              <div className="overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                      >
-                        항목
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
-                      >
-                        내용
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    <Tr
-                      title="주소"
-                      content={`${titleItem.platPlc} / ${titleItem.newPlatPlc}`}
-                    />
-                    <Tr
-                      title="용도지역"
-                      content={
-                        result.getBrBasisOulnInfo.response.body.items.item
-                          .jiyukCdNm
-                      }
-                    />
-                    <Tr
-                      title="주용도 / 구조"
-                      content={`${titleItem.mainPurpsCdNm} / ${titleItem.etcStrct}`}
-                    />
-                    <Tr
-                      title="대지면적"
-                      content={
-                        // `"337.87㎡ / 102.21평"`
-                        `${titleItem.platArea}㎡ / ${(
-                          titleItem.platArea / 3.3058
-                        ).toFixed(2)}평`
-                      }
-                    />
-                    <Tr
-                      title="건축면적"
-                      content={
-                        // "167.37㎡ / 50.63평"
-                        `${titleItem.archArea}㎡ / ${(
-                          titleItem.archArea / 3.3058
-                        ).toFixed(2)}평`
-                      }
-                    />
+      <Table title="건축물 현황" className="mb-10">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              항목
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              내용
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+          <BuildingInfoTr
+            title="주소"
+            content={`${titleItem.platPlc} / ${titleItem.newPlatPlc}`}
+          />
+          <BuildingInfoTr
+            title="용도지역"
+            content={
+              result.getBrBasisOulnInfo.response.body.items.item.jiyukCdNm
+            }
+          />
+          <BuildingInfoTr
+            title="주용도 / 구조"
+            content={`${titleItem.mainPurpsCdNm} / ${titleItem.etcStrct}`}
+          />
+          <BuildingInfoTr
+            title="대지면적"
+            content={
+              // `"337.87㎡ / 102.21평"`
+              `${titleItem.platArea}㎡ / ${(
+                titleItem.platArea / 3.3058
+              ).toFixed(2)}평`
+            }
+          />
+          <BuildingInfoTr
+            title="건축면적"
+            content={
+              // "167.37㎡ / 50.63평"
+              `${titleItem.archArea}㎡ / ${(
+                titleItem.archArea / 3.3058
+              ).toFixed(2)}평`
+            }
+          />
 
-                    <Tr
-                      title="연면적"
-                      content={
-                        // "1342.9㎡ / 406.23평"
-                        `${titleItem.totArea}㎡ / ${(
-                          titleItem.totArea / 3.3058
-                        ).toFixed(2)}평`
-                      }
-                    />
-                    <Tr
-                      title="용적률산정연면적"
-                      content={
-                        // "1181.37㎡ / 357.36평"
-                        `${titleItem.vlRatEstmTotArea}㎡ / ${(
-                          titleItem.vlRatEstmTotArea / 3.3058
-                        ).toFixed(2)}평`
-                      }
-                    />
-                    <Tr title="건폐율" content={`${titleItem.bcRat}%`} />
-                    <Tr title="용적률" content={`${titleItem.vlRat}%`} />
-                    <Tr
-                      title="높이 / 층수"
-                      content={`${titleItem.heit}m / 지하 ${titleItem.ugrndFlrCnt}층, 지상 ${titleItem.grndFlrCnt}층`}
-                    />
-                    <Tr
-                      title="세대 / 호 / 가구"
-                      content={`${titleItem.hhldCnt}세대 / ${titleItem.hoCnt}호 / ${titleItem.fmlyCnt}가구`}
-                    />
-                    <Tr
-                      title="기계식주차"
-                      content={`옥내 ${titleItem.indrMechUtcnt}대 / 옥외 ${titleItem.oudrMechUtcnt}대`}
-                    />
-                    <Tr
-                      title="자주식주차"
-                      content={`옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`}
-                    />
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+          <BuildingInfoTr
+            title="연면적"
+            content={
+              // "1342.9㎡ / 406.23평"
+              `${titleItem.totArea}㎡ / ${(titleItem.totArea / 3.3058).toFixed(
+                2
+              )}평`
+            }
+          />
+          <BuildingInfoTr
+            title="용적률산정연면적"
+            content={
+              // "1181.37㎡ / 357.36평"
+              `${titleItem.vlRatEstmTotArea}㎡ / ${(
+                titleItem.vlRatEstmTotArea / 3.3058
+              ).toFixed(2)}평`
+            }
+          />
+          <BuildingInfoTr title="건폐율" content={`${titleItem.bcRat}%`} />
+          <BuildingInfoTr title="용적률" content={`${titleItem.vlRat}%`} />
+          <BuildingInfoTr
+            title="높이 / 층수"
+            content={`${titleItem.heit}m / 지하 ${titleItem.ugrndFlrCnt}층, 지상 ${titleItem.grndFlrCnt}층`}
+          />
+          <BuildingInfoTr
+            title="세대 / 호 / 가구"
+            content={`${titleItem.hhldCnt}세대 / ${titleItem.hoCnt}호 / ${titleItem.fmlyCnt}가구`}
+          />
+          <BuildingInfoTr
+            title="기계식주차"
+            content={`옥내 ${titleItem.indrMechUtcnt}대 / 옥외 ${titleItem.oudrMechUtcnt}대`}
+          />
+          <BuildingInfoTr
+            title="자주식주차"
+            content={`옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`}
+          />
+        </tbody>
+      </Table>
 
-      <pre className="text-left">{JSON.stringify(result, null, 2)}</pre>
-      <Button
+      <Table title={"검토를 원하는 층을 선택해주세요"}>
+        <thead className="bg-gray-50">
+          <tr>
+            <th scope="col" className="py-3 ps-4">
+              <div className="flex items-center h-5">
+                <input
+                  id="hs-table-checkbox-all"
+                  type="checkbox"
+                  className="border-gray-200 rounded text-primary-600 focus:ring-primary-500 "
+                />
+                <label htmlFor="hs-table-checkbox-all" className="sr-only">
+                  Checkbox
+                </label>
+              </div>
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              층
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              면적
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              용도
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* 먼저 flrGbCd로 내림차순으로 정렬하고 그 다음 flrNo 내림차순으로 정렬한다. */}
+          {/* {result.getBrFlrOulnInfo.response.body.items.item.map( */}
+          {result.getBrFlrOulnInfo.response.body.items.item
+            .filter((item: any) => item.flrGbCd === 10 || item.flrGbCd === 20)
+            .sort((a: any, b: any) => {
+              const diff1 = b.flrGbCd - a.flrGbCd;
+              if (diff1 !== 0) {
+                return diff1;
+              }
+              if (b.flrGbCd === 10) {
+                return a.flrNo - b.flrNo;
+              } else {
+                return b.flrNo - a.flrNo;
+              }
+            })
+            .map((item: any, index: number) => (
+              <CheckFloorTr
+                key={index}
+                floorType={item.flrGbCd}
+                floor={item.flrNo}
+                checked={checkedFloors.includes(item.flrNo)}
+                area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed()}평`}
+                purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
+                onChange={(checked) => {
+                  if (checked) {
+                    setCheckedFloors([...checkedFloors, item.flrNo]);
+                  } else {
+                    setCheckedFloors(
+                      checkedFloors.filter((floor) => floor !== item.flrNo)
+                    );
+                  }
+                }}
+              />
+            ))}
+        </tbody>
+      </Table>
+
+      {/* <pre className="text-left">{JSON.stringify(result, null, 2)}</pre> */}
+      {/* <Button
         disabled={용적률건폐율loading}
         onClick={() => {
           set용적률건폐율loading(true);
@@ -258,7 +394,7 @@ export const Result = () => {
         ) : null}
         <span>용적률/건폐율 분석하기</span>
       </Button>
-      <pre className="text-left">{용적률건폐율result}</pre>
+      <pre className="text-left">{용적률건폐율result}</pre> */}
     </section>
   );
 };

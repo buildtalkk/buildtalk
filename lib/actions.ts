@@ -121,7 +121,7 @@ export const getBuildingInfo = async ({
 }) => {
   // getBrFlrOulnInfo
   const getBrFlrOulnInfoRes = fetch(
-    `http://apis.data.go.kr/1613000/BldRgstService_v2/getBrFlrOulnInfo?sigunguCd=${sigunguCd}&bjdongCd=${bjdongCd}&bun=${bun}&ji=${ji}&ServiceKey=oQa0u9ZYG7As2ub9ooGMnPoZyjWjj%2Fea01flLcbJXI0XUTWzmqoK5kpK1laeof6FCmVRvSwVtFs4VNc%2Fz6SK7w%3D%3D&_type=json`
+    `http://apis.data.go.kr/1613000/BldRgstService_v2/getBrFlrOulnInfo?sigunguCd=${sigunguCd}&bjdongCd=${bjdongCd}&bun=${bun}&ji=${ji}&numOfRows=500&ServiceKey=oQa0u9ZYG7As2ub9ooGMnPoZyjWjj%2Fea01flLcbJXI0XUTWzmqoK5kpK1laeof6FCmVRvSwVtFs4VNc%2Fz6SK7w%3D%3D&_type=json`
   ).then((res) => res.json());
   // getBrBasisOulnInfo
   const getBrBasisOulnInfoRes = fetch(
@@ -714,7 +714,7 @@ export type Juso = {
 };
 
 const token = "7221690912:AAFPODsY3u9Sd8s-qXBmL1ytU7_bMWZ9bnI"; // Replace with your own bot token
-const bot = new TelegramBot(token, { polling: true });
+
 // {
 //   "ok": true,
 //   "result": [
@@ -743,5 +743,6 @@ const bot = new TelegramBot(token, { polling: true });
 // }
 
 export const sendMessage = async (text: string) => {
+  const bot = new TelegramBot(token, { polling: true });
   await bot.sendMessage(-1002168271331, text);
 };
