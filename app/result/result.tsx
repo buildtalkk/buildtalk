@@ -249,7 +249,12 @@ export const Result = () => {
             title="주용도 / 구조"
             content={`${titleItem.mainPurpsCdNm} / ${titleItem.etcStrct}`}
           />
-          <BuildingInfoTr title="사용승인일" content={``} />
+          <BuildingInfoTr
+            title="사용승인일"
+            content={`${String(titleItem.useAprDay).slice(0, 4)}년 ${String(
+              titleItem.useAprDay
+            ).slice(4, 6)}월 ${String(titleItem.useAprDay).slice(6, 8)}일`}
+          />
           <BuildingInfoTr
             title="대지면적"
             content={
