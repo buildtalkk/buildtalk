@@ -23,8 +23,12 @@
     "next": "15.0.0-rc.0",
     "node-html-parser": "^6.1.13",
     "node-telegram-bot-api": "^0.66.0",
+    "notion-client": "^6.16.0",
+    "notion-types": "^6.16.0",
+    "notion-utils": "^6.16.0",
     "react": "19.0.0-rc-58af67a8f8-20240628",
     "react-dom": "19.0.0-rc-58af67a8f8-20240628",
+    "react-notion-x": "^6.16.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },
