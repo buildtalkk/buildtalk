@@ -167,6 +167,7 @@ export const Result = () => {
     getBrFlrOulnInfo: any;
     getBrBasisOulnInfo: any;
     getBrRecapTitleInfo: any;
+    getBrWclfInfo: any;
     getBrTitleInfo: GetBrTitleInfo;
     getBrJijiguInfo: GetBrJijiguInfo;
   } | null>(null);
@@ -189,6 +190,7 @@ export const Result = () => {
 
   const titleItem = result?.getBrTitleInfo.response.body.items.item;
   const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
+  const WclfItem = result?.getBrWclfInfo.response.body.items.item;
 
   if (!titleItem || !jijiguItem) {
     return "loading...";
@@ -247,6 +249,7 @@ export const Result = () => {
             title="주용도 / 구조"
             content={`${titleItem.mainPurpsCdNm} / ${titleItem.etcStrct}`}
           />
+          <BuildingInfoTr title="사용승인일" content={``} />
           <BuildingInfoTr
             title="대지면적"
             content={
@@ -301,6 +304,10 @@ export const Result = () => {
           <BuildingInfoTr
             title="자주식주차"
             content={`옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`}
+          />
+          <BuildingInfoTr
+            title="오수정화시설 (형식/용량)"
+            content={`${WclfItem.modeCdNm} / ${WclfItem.capaPsper}인, ${WclfItem.capaLube}㎥`}
           />
         </tbody>
       </Table>
@@ -367,7 +374,7 @@ export const Result = () => {
         </tbody>
       </Table>
 
-      {/* <pre className="text-left">{JSON.stringify(result, null, 2)}</pre> */}
+      <pre className="text-left">{JSON.stringify(result, null, 2)}</pre>
       {/* <Button
         disabled={용적률건폐율loading}
         onClick={() => {

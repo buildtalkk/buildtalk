@@ -142,16 +142,22 @@ export const getBuildingInfo = async ({
     `http://apis.data.go.kr/1613000/BldRgstService_v2/getBrJijiguInfo?sigunguCd=${sigunguCd}&bjdongCd=${bjdongCd}&bun=${bun}&ji=${ji}&ServiceKey=oQa0u9ZYG7As2ub9ooGMnPoZyjWjj%2Fea01flLcbJXI0XUTWzmqoK5kpK1laeof6FCmVRvSwVtFs4VNc%2Fz6SK7w%3D%3D&_type=json`
   ).then((res) => res.json());
 
+  const getBrWclfInfoRes = fetch(
+    `http://apis.data.go.kr/1613000/BldRgstService_v2/getBrWclfInfo?sigunguCd=${sigunguCd}&bjdongCd=${bjdongCd}&bun=${bun}&ji=${ji}&ServiceKey=oQa0u9ZYG7As2ub9ooGMnPoZyjWjj%2Fea01flLcbJXI0XUTWzmqoK5kpK1laeof6FCmVRvSwVtFs4VNc%2Fz6SK7w%3D%3D&_type=json`
+  ).then((res) => res.json());
+
   const [
     getBrFlrOulnInfo,
     getBrBasisOulnInfo,
     getBrRecapTitleInfo,
+    getBrWclfInfo,
     getBrTitleInfo,
     getBrJijiguInfo,
   ] = await Promise.all([
     getBrFlrOulnInfoRes,
     getBrBasisOulnInfoRes,
     getBrRecapTitleInfoRes,
+    getBrWclfInfoRes,
     getBrTitleInfoRes,
     getBrJijiguInfoRes,
   ]);
@@ -160,6 +166,7 @@ export const getBuildingInfo = async ({
     getBrFlrOulnInfo,
     getBrBasisOulnInfo,
     getBrRecapTitleInfo,
+    getBrWclfInfo,
     getBrTitleInfo: getBrTitleInfo as GetBrTitleInfo,
     getBrJijiguInfo: getBrJijiguInfo as GetBrJijiguInfo,
   };
