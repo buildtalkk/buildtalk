@@ -29,7 +29,7 @@ const routeList: RouteProps[] = [
     label: "서비스 소개",
   },
   {
-    href: "https://naver.com",
+    href: "https://docs.google.com/forms/d/1yYalkCYn0yUr744ObSHua9cO188HemMJTR0MpT471F4/",
     label: "건축 상담하기",
   },
   {
