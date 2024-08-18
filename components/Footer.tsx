@@ -14,7 +14,7 @@ export const Footer = () => {
             className="font-bold text-xl flex"
           >
             <LogoIcon />
-            ShadcnUI/React
+            BuildTalk
           </a>
         </div>
 
@@ -157,10 +157,10 @@ export const Footer = () => {
           <a
             rel="noreferrer noopener"
             target="_blank"
-            href="https://github.com/leoMirandaa"
+            href="https://github.com/buildtalk"
             className="text-primary transition-all border-primary hover:border-b-2"
           >
-            Leo Miranda
+            BuildTalk
           </a>
         </h3>
       </section>

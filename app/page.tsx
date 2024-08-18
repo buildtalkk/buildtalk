@@ -11,6 +11,7 @@ import { Navbar } from "@/components/Navbar";
 import { Newsletter } from "@/components/Newsletter";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { Service2 } from "@/components/Service2";
+import { Service3 } from "@/components/Service3";
 import { ThemeProvider } from "@/components/theme-provider";
 
 function Home() {
@@ -24,7 +25,7 @@ function Home() {
       {/* <Features /> */}
       {/* <Services /> */}
       <Service2 />
-      <Service2 />
+      <Service3 />
       <Banner />
       <Banner2 />
       {/* <Cta /> */}
