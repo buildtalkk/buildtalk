@@ -2,6 +2,7 @@
 
 import { useDebounce } from "@/hooks/useDebounce";
 import { Juso, searchAddress } from "@/lib/actions";
+import { Search as SearchIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -55,34 +56,53 @@ export function Search() {
     router.push(`/result?${searchParams.toString()}`);
   };
 
+  const handleClear = () => {
+    setSearch("");
+    setCurrentIndex(0);
+  };
+
   return (
     <div className="relative">
-      <input
-        id="search"
-        type="search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowDown") {
-            e.preventDefault();
-            if (currentIndex < searchResults.length - 1) {
-              setCurrentIndex((prev) => prev + 1);
+      <div className="relative">
+        <SearchIcon
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          size={18}
+        />
+        <input
+          id="search"
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              if (currentIndex < searchResults.length - 1) {
+                setCurrentIndex((prev) => prev + 1);
+              }
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              if (currentIndex > 0) {
+                setCurrentIndex((prev) => prev - 1);
+              }
+            } else if (e.key === "Enter") {
+              e.preventDefault();
+              if (searchResults.length > 0) {
+                handleJuso(searchResults[currentIndex]);
+              }
             }
-          } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            if (currentIndex > 0) {
-              setCurrentIndex((prev) => prev - 1);
-            }
-          } else if (e.key === "Enter") {
-            e.preventDefault();
-            if (searchResults.length > 0) {
-              handleJuso(searchResults[currentIndex]);
-            }
-          }
-        }}
-        placeholder="주소를 입력해 주세요."
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
-      />
+          }}
+          placeholder="주소를 입력해 주세요."
+          className="flex h-10 w-full rounded-md border border-input bg-background pl-10 pr-10 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        />
+        {search && (
+          <button
+            onClick={handleClear}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          >
+            <X size={18} />
+          </button>
+        )}
+      </div>
 
       {/* result */}
       <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow-lg ">
