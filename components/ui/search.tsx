@@ -4,6 +4,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Juso, searchAddress } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 export function Search() {
   const [search, setSearch] = useState("");
@@ -66,30 +67,17 @@ export function Search() {
       {/* result */}
       <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow ">
         {searchResults.length > 0 ? (
-          <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
-            {searchResults.map((juso) => (
+          <div className="overflow-hidden py-1 text-foreground">
+            {searchResults.map((juso, index) => (
               <div
                 key={juso.bdMgtSn}
-                className="flex items-center border-b px-3 cursor-pointer hover:bg-primary-foreground hover:text-primary-background"
+                className={twMerge(
+                  "flex items-center  cursor-pointer hover:bg-primary-foreground hover:text-primary-background",
+                  index !== searchResults.length - 1 && "border-b"
+                )}
                 onClick={() => handleJuso(juso)}
               >
-                <span className="mr-2 h-4 w-4 shrink-0 opacity-50">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="h-4 w-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </span>
-                <span className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50">
+                <span className="flex w-full rounded-md bg-transparent py-2 px-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50">
                   {juso.jibunAddr}
                 </span>
               </div>
