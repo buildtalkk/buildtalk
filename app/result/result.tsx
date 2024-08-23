@@ -176,7 +176,7 @@ export const Result = () => {
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
   const [checkedFloors, setCheckedFloors] = useState<number[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
@@ -197,6 +197,19 @@ export const Result = () => {
   const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
   const WclfItem = result?.getBrWclfInfo.response.body.items.item;
 
+  if (loading) {
+    return (
+      <section
+        id="howItWorks"
+        className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
+      >
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+        <p className="mt-4">현재 건축물 정보를</p>
+        <p>불러오고 있습니다</p>
+      </section>
+    );
+  }
+
   if (!titleItem || Array.isArray(titleItem)) {
     return (
       <section
@@ -211,18 +224,24 @@ export const Result = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <section
-        id="howItWorks"
-        className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
-      >
-        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-        <p className="mt-4">현재 건축물 정보를</p>
-        <p>불러오고 있습니다</p>
-      </section>
-    );
-  }
+  /* 먼저 flrGbCd로 내림차순으로 정렬하고 그 다음 flrNo 내림차순으로 정렬한다. */
+  const floorItems = Array.isArray(
+    result?.getBrFlrOulnInfo.response.body.items.item
+  )
+    ? result?.getBrFlrOulnInfo.response.body.items.item
+        .filter((item: any) => item.flrGbCd === 10 || item.flrGbCd === 20)
+        .sort((a: any, b: any) => {
+          const diff1 = b.flrGbCd - a.flrGbCd;
+          if (diff1 !== 0) {
+            return diff1;
+          }
+          if (b.flrGbCd === 10) {
+            return a.flrNo - b.flrNo;
+          } else {
+            return b.flrNo - a.flrNo;
+          }
+        })
+    : [result?.getBrFlrOulnInfo.response.body.items.item];
 
   return (
     <section id="howItWorks" className="container text-center py-12 sm:py-16">
@@ -366,44 +385,32 @@ export const Result = () => {
           </tr>
         </thead>
         <tbody>
-          {/* 먼저 flrGbCd로 내림차순으로 정렬하고 그 다음 flrNo 내림차순으로 정렬한다. */}
-          {/* {result.getBrFlrOulnInfo.response.body.items.item.map( */}
-          {result.getBrFlrOulnInfo.response.body.items.item
-            .filter((item: any) => item.flrGbCd === 10 || item.flrGbCd === 20)
-            .sort((a: any, b: any) => {
-              const diff1 = b.flrGbCd - a.flrGbCd;
-              if (diff1 !== 0) {
-                return diff1;
-              }
-              if (b.flrGbCd === 10) {
-                return a.flrNo - b.flrNo;
-              } else {
-                return b.flrNo - a.flrNo;
-              }
-            })
-            .map((item: any, index: number) => (
-              <CheckFloorTr
-                key={index}
-                floorType={item.flrGbCd}
-                floor={item.flrNo}
-                checked={checkedFloors.includes(item.flrNo)}
-                area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed(2)}평`}
-                purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
-                onChange={(checked) => {
-                  if (checked) {
-                    setCheckedFloors([...checkedFloors, item.flrNo]);
-                  } else {
-                    setCheckedFloors(
-                      checkedFloors.filter((floor) => floor !== item.flrNo)
-                    );
-                  }
-                }}
-              />
-            ))}
+          {floorItems.map((item: any, index: number) => (
+            <CheckFloorTr
+              key={index}
+              floorType={item.flrGbCd}
+              floor={item.flrNo}
+              checked={checkedFloors.includes(item.flrNo)}
+              area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed(2)}평`}
+              purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
+              onChange={(checked) => {
+                if (checked) {
+                  setCheckedFloors([...checkedFloors, item.flrNo]);
+                } else {
+                  setCheckedFloors(
+                    checkedFloors.filter((floor) => floor !== item.flrNo)
+                  );
+                }
+              }}
+            />
+          ))}
         </tbody>
       </Table>
 
-      <pre className="text-left">{JSON.stringify(result, null, 2)}</pre>
+      {searchParams.get("debug") ? (
+        <pre className="text-left">{JSON.stringify(result, null, 2)}</pre>
+      ) : null}
+
       {/* <Button
         disabled={용적률건폐율loading}
         onClick={() => {
