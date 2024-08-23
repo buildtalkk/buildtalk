@@ -1,7 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Search } from "@/components/ui/search";
 import { getBuildingInfo } from "@/lib/actions";
+import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -174,12 +176,15 @@ export const Result = () => {
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
   const [checkedFloors, setCheckedFloors] = useState<number[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
+      setLoading(true);
       getBuildingInfo({ sigunguCd, bjdongCd, bun, ji }).then((data) => {
         console.log("data", data);
         setResult(data);
+        setLoading(false);
       });
     }
   }, [sigunguCd, bjdongCd, bun, ji]);
@@ -192,12 +197,31 @@ export const Result = () => {
   const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
   const WclfItem = result?.getBrWclfInfo.response.body.items.item;
 
-  if (!titleItem || !jijiguItem) {
-    return "loading...";
+  if (!titleItem || Array.isArray(titleItem)) {
+    return (
+      <section
+        id="howItWorks"
+        className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
+      >
+        <p className="mt-4">건축물 대장 정보를 찾을 수 없습니다.</p>
+        <Button onClick={() => window.history.back()} className="mt-4">
+          뒤로가기
+        </Button>
+      </section>
+    );
   }
 
-  if (Array.isArray(titleItem)) {
-    return "건축물 정보가 없습니다.";
+  if (loading) {
+    return (
+      <section
+        id="howItWorks"
+        className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
+      >
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+        <p className="mt-4">현재 건축물 정보를</p>
+        <p>불러오고 있습니다</p>
+      </section>
+    );
   }
 
   return (
@@ -242,7 +266,7 @@ export const Result = () => {
             content={
               Array.isArray(jijiguItem)
                 ? jijiguItem.find((item) => item.jijiguGbCd === 1)?.jijiguCdNm
-                : jijiguItem.jijiguCdNm
+                : jijiguItem?.jijiguCdNm ?? "-"
             }
           />
           <BuildingInfoTr

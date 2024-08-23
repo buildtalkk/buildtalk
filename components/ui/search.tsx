@@ -11,6 +11,7 @@ export function Search() {
   const [searchResults, setSearchResults] = useState<Juso[]>([]);
   const router = useRouter();
   const debouncedSearch = useDebounce(search, 300);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (search.length < 2) {
@@ -20,6 +21,7 @@ export function Search() {
 
   useEffect(() => {
     searchAddress(debouncedSearch).then((jusos) => {
+      setCurrentIndex(0);
       console.log("jusos", jusos);
       if (jusos && jusos.length > 0) {
         setSearchResults(jusos);
@@ -60,20 +62,40 @@ export function Search() {
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (currentIndex < searchResults.length - 1) {
+              setCurrentIndex((prev) => prev + 1);
+            }
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (currentIndex > 0) {
+              setCurrentIndex((prev) => prev - 1);
+            }
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (searchResults.length > 0) {
+              handleJuso(searchResults[currentIndex]);
+            }
+          }
+        }}
         placeholder="주소를 입력해 주세요."
         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
       />
 
       {/* result */}
-      <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow ">
+      <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow-lg ">
         {searchResults.length > 0 ? (
           <div className="overflow-hidden py-1 text-foreground">
             {searchResults.map((juso, index) => (
               <div
                 key={juso.bdMgtSn}
                 className={twMerge(
-                  "flex items-center  cursor-pointer hover:bg-primary-foreground hover:text-primary-background",
-                  index !== searchResults.length - 1 && "border-b"
+                  "flex items-center cursor-pointer hover:bg-primary-foreground hover:text-primary-background",
+                  index !== searchResults.length - 1 && "border-b",
+                  currentIndex === index &&
+                    "bg-primary-foreground text-primary-background"
                 )}
                 onClick={() => handleJuso(juso)}
               >
