@@ -28,7 +28,7 @@ export const Hero = () => {
       </div> */}
 
       {/* Shadow effect */}
-      <div className="shadow"></div>
+      <div className="hero-bg-shadow"></div>
       {/* <div className="shadow"></div> */}
     </section>
   );

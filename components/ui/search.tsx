@@ -12,6 +12,12 @@ export function Search() {
   const debouncedSearch = useDebounce(search, 300);
 
   useEffect(() => {
+    if (search.length < 2) {
+      setSearchResults([]);
+    }
+  }, [search.length]);
+
+  useEffect(() => {
     searchAddress(debouncedSearch).then((jusos) => {
       console.log("jusos", jusos);
       if (jusos && jusos.length > 0) {
@@ -23,18 +29,6 @@ export function Search() {
   useEffect(() => {
     console.log("searchResults", searchResults);
   }, [searchResults]);
-
-  // React.useEffect(() => {
-  //   const down = (e: KeyboardEvent) => {
-  //     if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-  //       e.preventDefault();
-  //       setOpen((open) => !open);
-  //     }
-  //   };
-
-  //   document.addEventListener("keydown", down);
-  //   return () => document.removeEventListener("keydown", down);
-  // }, []);
 
   const handleJuso = (juso: Juso) => {
     const sigunguCd = juso.admCd.slice(0, 5);
@@ -59,18 +53,18 @@ export function Search() {
   };
 
   return (
-    <>
+    <div className="relative">
       <input
         id="search"
         type="search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="주소를 입력해 주세요."
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 relative"
       />
 
       {/* result */}
-      <div className="max-h-[300px] overflow-y-auto overflow-x-hidden">
+      <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow ">
         {searchResults.length > 0 ? (
           <div className="overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground">
             {searchResults.map((juso) => (
@@ -103,6 +97,6 @@ export function Search() {
           </div>
         ) : null}
       </div>
-    </>
+    </div>
   );
 }

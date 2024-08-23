@@ -80,7 +80,7 @@ html {
 }
 
 /* HeroCards background shadow */
-.shadow {
+.hero-bg-shadow {
   position: absolute;
   background: hsl(var(--primary) / 0%);
   border-radius: 24px;
@@ -105,7 +105,7 @@ html {
 }
 
 @media (max-width: 1024px) {
-  .shadow {
+  .hero-bg-shadow {
     top: 70px;
   }
 
@@ -122,7 +122,7 @@ html {
 }
 
 @media (max-width: 768px) {
-  .shadow {
+  .hero-bg-shadow {
     top: 70px;
     width: 100px;
     height: 350px;
