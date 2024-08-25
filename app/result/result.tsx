@@ -125,10 +125,10 @@ const CheckFloorTr = ({
     floorType === 10
       ? "지하"
       : floorType === 20
-      ? "지상"
-      : floorType === 30
-      ? "옥탑"
-      : "";
+        ? "지상"
+        : floorType === 30
+          ? "옥탑"
+          : "";
   return (
     <tr>
       <td className="py-3 ps-4">
@@ -136,6 +136,8 @@ const CheckFloorTr = ({
           <input
             id="hs-table-checkbox-all"
             type="checkbox"
+            checked={checked}
+            onChange={e => onChange(e.target.checked)}
             className="border-gray-200 rounded text-primary-600 focus:ring-primary-500 "
           />
           <label htmlFor="hs-table-checkbox-all" className="sr-only">
@@ -175,13 +177,13 @@ export const Result = () => {
   } | null>(null);
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
-  const [checkedFloors, setCheckedFloors] = useState<number[]>([]);
+  const [checkedFloor, setCheckedFloor] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
       setLoading(true);
-      getBuildingInfo({ sigunguCd, bjdongCd, bun, ji }).then((data) => {
+      getBuildingInfo({ sigunguCd, bjdongCd, bun, ji }).then(data => {
         console.log("data", data);
         setResult(data);
         setLoading(false);
@@ -284,8 +286,8 @@ export const Result = () => {
             title="용도지역"
             content={
               Array.isArray(jijiguItem)
-                ? jijiguItem.find((item) => item.jijiguGbCd === 1)?.jijiguCdNm
-                : jijiguItem?.jijiguCdNm ?? "-"
+                ? jijiguItem.find(item => item.jijiguGbCd === 1)?.jijiguCdNm
+                : (jijiguItem?.jijiguCdNm ?? "-")
             }
           />
           <BuildingInfoTr
@@ -390,16 +392,14 @@ export const Result = () => {
               key={index}
               floorType={item.flrGbCd}
               floor={item.flrNo}
-              checked={checkedFloors.includes(item.flrNo)}
+              checked={checkedFloor === item.flrGbCdNm + item.flrNo}
               area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed(2)}평`}
               purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
-              onChange={(checked) => {
+              onChange={checked => {
                 if (checked) {
-                  setCheckedFloors([...checkedFloors, item.flrNo]);
+                  setCheckedFloor(item.flrGbCdNm + item.flrNo);
                 } else {
-                  setCheckedFloors(
-                    checkedFloors.filter((floor) => floor !== item.flrNo)
-                  );
+                  setCheckedFloor("");
                 }
               }}
             />
