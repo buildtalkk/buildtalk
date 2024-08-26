@@ -177,7 +177,9 @@ export const Result = () => {
   } | null>(null);
   const [용적률건폐율result, set용적률건폐율result] = useState("");
   const [용적률건폐율loading, set용적률건폐율loading] = useState(false);
-  const [checkedFloor, setCheckedFloor] = useState<string>("");
+  const [checkedFloorIndex, setCheckedFloorIndex] = useState<number | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -392,15 +394,11 @@ export const Result = () => {
               key={index}
               floorType={item.flrGbCd}
               floor={item.flrNo}
-              checked={checkedFloor === item.flrGbCdNm + item.flrNo}
+              checked={checkedFloorIndex === index}
               area={`${item.area}㎡ / ${(item.area / 3.3058).toFixed(2)}평`}
               purpose={`${item.mainPurpsCdNm} - ${item.etcPurps}`}
               onChange={checked => {
-                if (checked) {
-                  setCheckedFloor(item.flrGbCdNm + item.flrNo);
-                } else {
-                  setCheckedFloor("");
-                }
+                setCheckedFloorIndex(checked ? index : null);
               }}
             />
           ))}
