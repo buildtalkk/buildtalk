@@ -5,7 +5,7 @@ import { Search } from "@/components/ui/search";
 import { getBuildingInfo } from "@/lib/actions";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const Item: React.FC<{
@@ -199,7 +199,10 @@ export const Result = () => {
 
   const titleItem = result?.getBrTitleInfo.response.body.items.item;
   const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
-  const WclfItem = result?.getBrWclfInfo.response.body.items.item;
+  const WclfItems = useMemo(() => {
+    const item = result?.getBrWclfInfo.response.body.items.item;
+    return Array.isArray(item) ? item : [item];
+  }, [result]);
 
   if (loading) {
     return (
@@ -359,10 +362,10 @@ export const Result = () => {
           />
           <BuildingInfoTr
             title="오수정화시설 (형식/용량)"
-            content={`${WclfItem?.modeCdNm || "-"} / ${
-              WclfItem?.capaPsper || "-"
-            }인, ${WclfItem?.capaLube || "-"}㎥`}
-            // content={`${WclfItem.modeCdNm} / ${WclfItem.capaPsper}인, ${WclfItem.capaLube}㎥`}
+            content={WclfItems.map(
+              (WclfItem: any, index: number) =>
+                `${WclfItem?.modeCdNm ?? "-"} / ${WclfItem?.capaPsper ?? "-"}인, ${WclfItem?.capaLube ?? "-"}㎥${WclfItems.length - 1 !== index ? " | " : ""}`
+            )}
           />
         </tbody>
       </Table>
