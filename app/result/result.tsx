@@ -435,6 +435,23 @@ export const Result = () => {
         <span>용적률/건폐율 분석하기</span>
       </Button>
       <pre className="text-left">{용적률건폐율result}</pre> */}
+      <Button
+        className={"mt-8"}
+        disabled={checkedFloorIndex === null}
+        onClick={() => {
+          if (!checkedFloorIndex) return;
+          const item = floorItems[checkedFloorIndex];
+          if (!item.platPlc.includes("제주시")) {
+            alert("제주시에 위치한 건물만 분석이 가능합니다.");
+          } else if (item.area >= 500) {
+            alert("500㎡ 미만의 면적만 분석이 가능합니다.");
+          } else {
+            console.log("good to go", floorItems[checkedFloorIndex]);
+          }
+        }}
+      >
+        <span>건축 규제 검토하기</span>
+      </Button>
     </section>
   );
 };
