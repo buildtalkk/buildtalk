@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
+import Breadcrumb from "@/components/Breadcrumb";
 
 const Item: React.FC<{
   children?: React.ReactNode;
@@ -252,15 +253,7 @@ export const Result = () => {
 
   return (
     <section id="howItWorks" className="container text-center py-12 sm:py-16">
-      <ol className="flex items-center w-full text-sm font-medium text-center text-gray-500 sm:text-base mb-10">
-        <Item num={1} checked>
-          건축물 현황
-        </Item>
-        <Item num={2}>건축 규제 검토</Item>
-        <Item num={3} isLast>
-          리포트
-        </Item>
-      </ol>
+      <Breadcrumb />
       <div className="mb-10">
         <Search />
       </div>
