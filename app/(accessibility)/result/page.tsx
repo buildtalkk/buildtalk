@@ -324,8 +324,8 @@ const ResultPage = () => {
         className={"mt-8"}
         disabled={checkedFloorIndex === null}
         onClick={() => {
-          if (!checkedFloorIndex) return;
-          const item = floorItems[checkedFloorIndex];
+          const item = floorItems[checkedFloorIndex as number];
+          if (!item) return;
           if (!item.platPlc.includes("제주시")) {
             alert("제주시에 위치한 건물만 분석이 가능합니다.");
           } else if (item.area >= 500) {
