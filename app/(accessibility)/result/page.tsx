@@ -1,111 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Search } from "@/components/ui/search";
 import { getBuildingInfo } from "@/lib/actions";
 import { Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { twMerge } from "tailwind-merge";
-import Breadcrumb from "@/components/Breadcrumb";
-
-const Item: React.FC<{
-  children?: React.ReactNode;
-  isLast?: boolean;
-  num: number;
-  checked?: boolean;
-}> = ({ children, isLast, num, checked }) => {
-  return !isLast ? (
-    <li
-      className={twMerge(
-        "flex md:w-full items-center sm:after:content-[''] after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10",
-        checked && "text-primary-500"
-      )}
-    >
-      <span className="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 whitespace-nowrap">
-        {checked ? (
-          <svg
-            className="w-3.5 h-3.5 sm:w-4 sm:h-4 me-2.5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-          </svg>
-        ) : (
-          <span className="me-2">{num}</span>
-        )}
-        {children}
-      </span>
-    </li>
-  ) : (
-    <li className="flex items-center whitespace-nowrap">
-      {checked ? (
-        <svg
-          className="w-3.5 h-3.5 sm:w-4 sm:h-4 me-2.5"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-        </svg>
-      ) : (
-        <span className="me-2">{num}</span>
-      )}
-      {children}
-    </li>
-  );
-};
-
-const BuildingInfoTr = ({
-  title,
-  content,
-}: {
-  title: React.ReactNode;
-  content: React.ReactNode;
-}) => {
-  return (
-    <tr>
-      <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-800">
-        {title}
-      </td>
-      <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-800">
-        {content}
-      </td>
-    </tr>
-  );
-};
-
-const Table = ({
-  children,
-  title,
-  className,
-}: {
-  children: React.ReactNode;
-  title: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={twMerge("flex flex-col text-left", className)}>
-      <div className="-m-1.5 overflow-x-auto ">
-        <div className="p-1.5 min-w-full inline-block align-middle">
-          <div className="border rounded-lg divide-y divide-gray-200">
-            <div className="py-3 px-4">
-              <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
-            </div>
-            <div className="overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                {children}
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { useStateContext } from "@/store/StateContext";
+import Table from "@/components/Table";
+import BuildingInfoTr from "@/components/BuildingInfoTr";
+import { get오수정화시설, get용도지역 } from "@/utils/building-info";
 
 const CheckFloorTr = ({
   floor,
@@ -159,7 +62,7 @@ const CheckFloorTr = ({
   );
 };
 
-export const Result = () => {
+const ResultPage = () => {
   const searchParams = useSearchParams();
   const sigunguCd = searchParams.get("sigunguCd");
   const bjdongCd = searchParams.get("bjdongCd");
@@ -182,6 +85,8 @@ export const Result = () => {
     null
   );
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const { setBuildingInfo, setFloorInfo } = useStateContext();
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
@@ -200,10 +105,7 @@ export const Result = () => {
 
   const titleItem = result?.getBrTitleInfo.response.body.items.item;
   const jijiguItem = result?.getBrJijiguInfo.response.body.items.item;
-  const WclfItems = useMemo(() => {
-    const item = result?.getBrWclfInfo.response.body.items.item;
-    return Array.isArray(item) ? item : [item];
-  }, [result]);
+  const WclfItem = result?.getBrWclfInfo.response.body.items.item;
 
   if (loading) {
     return (
@@ -251,13 +153,16 @@ export const Result = () => {
         })
     : [result?.getBrFlrOulnInfo.response.body.items.item];
 
-  return (
-    <section id="howItWorks" className="container text-center py-12 sm:py-16">
-      <Breadcrumb />
-      <div className="mb-10">
-        <Search />
-      </div>
+  const buildingInfo = {
+    address: `${titleItem.platPlc} / ${titleItem.newPlatPlc}`,
+    usage: get용도지역(jijiguItem),
+    mechanicalParking: `옥내 ${titleItem.indrMechUtcnt}대 / 옥외 ${titleItem.oudrMechUtcnt}대`,
+    selfParking: `옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`,
+    sewageTreatmentFacility: get오수정화시설(WclfItem),
+  };
 
+  return (
+    <>
       <Table title="건축물 현황" className="mb-10">
         <thead className="bg-gray-50">
           <tr>
@@ -276,18 +181,8 @@ export const Result = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          <BuildingInfoTr
-            title="주소"
-            content={`${titleItem.platPlc} / ${titleItem.newPlatPlc}`}
-          />
-          <BuildingInfoTr
-            title="용도지역"
-            content={
-              Array.isArray(jijiguItem)
-                ? jijiguItem.find(item => item.jijiguGbCd === 1)?.jijiguCdNm
-                : (jijiguItem?.jijiguCdNm ?? "-")
-            }
-          />
+          <BuildingInfoTr title="주소" content={buildingInfo.address} />
+          <BuildingInfoTr title="용도지역" content={buildingInfo.usage} />
           <BuildingInfoTr
             title="주용도 / 구조"
             content={`${titleItem.mainPurpsCdNm} / ${titleItem.etcStrct}`}
@@ -347,18 +242,15 @@ export const Result = () => {
           />
           <BuildingInfoTr
             title="기계식주차"
-            content={`옥내 ${titleItem.indrMechUtcnt}대 / 옥외 ${titleItem.oudrMechUtcnt}대`}
+            content={buildingInfo.mechanicalParking}
           />
           <BuildingInfoTr
             title="자주식주차"
-            content={`옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`}
+            content={buildingInfo.selfParking}
           />
           <BuildingInfoTr
             title="오수정화시설 (형식/용량)"
-            content={WclfItems.map(
-              (WclfItem: any, index: number) =>
-                `${WclfItem?.modeCdNm ?? "-"} / ${WclfItem?.capaPsper ?? "-"}인, ${WclfItem?.capaLube ?? "-"}㎥${WclfItems.length - 1 !== index ? " | " : ""}`
-            )}
+            content={buildingInfo.sewageTreatmentFacility}
           />
         </tbody>
       </Table>
@@ -439,12 +331,16 @@ export const Result = () => {
           } else if (item.area >= 500) {
             alert("500㎡ 미만의 면적만 분석이 가능합니다.");
           } else {
-            console.log("good to go", floorItems[checkedFloorIndex]);
+            setFloorInfo(item);
+            setBuildingInfo(buildingInfo);
+            router.push("/review");
           }
         }}
       >
         <span>건축 규제 검토하기</span>
       </Button>
-    </section>
+    </>
   );
 };
+
+export default ResultPage;
