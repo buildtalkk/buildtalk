@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { getBuildingInfo } from "@/lib/actions";
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { useStateContext } from "@/store/StateContext";
+import { useEffect, useState } from "react";
 import Table from "@/components/Table";
 import BuildingInfoTr from "@/components/BuildingInfoTr";
 import { get오수정화시설, get용도지역 } from "@/utils/building-info";
+import useSessionStorageState from "use-session-storage-state";
 
 const CheckFloorTr = ({
   floor,
@@ -86,7 +86,8 @@ const ResultPage = () => {
   );
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { setBuildingInfo, setFloorInfo } = useStateContext();
+  const [, setBuildingInfo] = useSessionStorageState("buildingInfo");
+  const [, setFloorInfo] = useSessionStorageState("floorInfo");
 
   useEffect(() => {
     if (sigunguCd && bjdongCd && bun && ji) {
@@ -333,7 +334,9 @@ const ResultPage = () => {
           } else {
             setFloorInfo(item);
             setBuildingInfo(buildingInfo);
-            router.push("/review");
+            router.push(
+              `/review?address=${encodeURIComponent(buildingInfo.address)}`
+            );
           }
         }}
       >
