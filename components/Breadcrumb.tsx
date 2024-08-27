@@ -1,4 +1,5 @@
 import { twMerge } from "tailwind-merge";
+import { usePathname } from "next/navigation";
 
 const Item: React.FC<{
   children?: React.ReactNode;
@@ -51,13 +52,16 @@ const Item: React.FC<{
 };
 
 const Breadcrumb = () => {
+  const pathname = usePathname();
   return (
     <ol className="flex items-center w-full text-sm font-medium text-center text-gray-500 sm:text-base mb-10">
-      <Item num={1} checked>
+      <Item num={1} checked={pathname === "/result"}>
         건축물 현황
       </Item>
-      <Item num={2}>건축 규제 검토</Item>
-      <Item num={3} isLast>
+      <Item num={2} checked={pathname === "/review"}>
+        건축 규제 검토
+      </Item>
+      <Item num={3} checked={pathname === "/report"} isLast>
         리포트
       </Item>
     </ol>
