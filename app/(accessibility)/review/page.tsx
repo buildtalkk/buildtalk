@@ -91,6 +91,7 @@ const ReviewPage = () => {
           <BuildingInfoTr
             title="오수정화시설 (형식/용량)"
             content={buildingInfo.sewageTreatmentFacility}
+            comment={" *시,군,구청 확인 필요"}
           />
         </tbody>
       </Table>
