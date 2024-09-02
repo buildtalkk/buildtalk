@@ -294,7 +294,7 @@ const ReviewPage = () => {
         </header>
 
         <div className={"flex flex-col min-w-full"}>
-          <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-scroll">
+          <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto">
             <section id={"Label Group"} className={"h-full flex gap-4"}>
               <p className="text-sm w-20 h-8 flex items-center justify-start font-bold text-gray-800">
                 {floorInfo.flrGbCdNm} {floorInfo.flrNo}층
