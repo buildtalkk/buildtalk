@@ -68,6 +68,9 @@ importers:
       react-notion-x:
         specifier: ^6.16.0
         version: 6.16.0(@babel/runtime@7.24.7)(@types/react@18.3.3)(react-dom@19.0.0-rc-58af67a8f8-20240628(react@19.0.0-rc-58af67a8f8-20240628))(react@19.0.0-rc-58af67a8f8-20240628)(webpack@5.93.0)
+      react-number-format:
+        specifier: ^5.4.1
+        version: 5.4.1(react-dom@19.0.0-rc-58af67a8f8-20240628(react@19.0.0-rc-58af67a8f8-20240628))(react@19.0.0-rc-58af67a8f8-20240628)
       tailwind-merge:
         specifier: ^2.3.0
         version: 2.3.0
@@ -2711,6 +2714,12 @@ packages:
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
+
+  react-number-format@5.4.1:
+    resolution: {integrity: sha512-NICOjo/70dcAiwVmH6zMWoZrTQDlBrEXV/f7S0t/ewlpzp4z00pasg5G1yBX6NHLafwOF3QZ+VvK/XApwSKxdA==}
+    peerDependencies:
+      react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
 
   react-pdf@5.7.2:
     resolution: {integrity: sha512-hdDwvf007V0i2rPCqQVS1fa70CXut17SN3laJYlRHzuqcu8sLLjEoeXihty6c0Ev5g1mw31b8OT8EwRw1s8C4g==}
@@ -6072,6 +6081,11 @@ snapshots:
       - '@types/react'
       - webpack
       - worker-loader
+
+  react-number-format@5.4.1(react-dom@19.0.0-rc-58af67a8f8-20240628(react@19.0.0-rc-58af67a8f8-20240628))(react@19.0.0-rc-58af67a8f8-20240628):
+    dependencies:
+      react: 19.0.0-rc-58af67a8f8-20240628
+      react-dom: 19.0.0-rc-58af67a8f8-20240628(react@19.0.0-rc-58af67a8f8-20240628)
 
   react-pdf@5.7.2(@types/react@18.3.3)(react-dom@19.0.0-rc-58af67a8f8-20240628(react@19.0.0-rc-58af67a8f8-20240628))(react@19.0.0-rc-58af67a8f8-20240628)(webpack@5.93.0):
     dependencies:
