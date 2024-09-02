@@ -5,3 +5,9 @@ export type BuildingInfo = {
   selfParking: string;
   sewageTreatmentFacility: string;
 };
+
+export type SelectedInfo = {
+  mainCategory: string;
+  subCategory: string;
+  area: number;
+};
