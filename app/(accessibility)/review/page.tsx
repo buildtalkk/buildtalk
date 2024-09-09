@@ -354,6 +354,28 @@ const ReviewPage = () => {
               className={"w-1/4 mx-auto min-w-[200px]"}
               disabled={!isValid}
               onClick={() => {
+                if (floorInfo.area < (area ?? 0)) {
+                  return alert("입력한 면적이 현재 층의 면적보다 큽니다.");
+                }
+                /* 예외 처리: 휴게음식점 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
+                if (selectedSubCategory.includes("휴게음식점")) {
+                  if (
+                    selectedMainCategory === "제1종 근린생활시설" &&
+                    (area ?? 0) >= 300
+                  ) {
+                    return alert(
+                      "휴게음식점의 면적에 따른 근생을 선택해주세요. 300m² 이상인 경우 제2종 근생을 선택해주세요."
+                    );
+                  }
+                  if (
+                    selectedMainCategory === "제2종 근린생활시설" &&
+                    (area ?? 0) < 300
+                  ) {
+                    return alert(
+                      "휴게음식점의 면적에 따른 근생을 선택해주세요. 300m² 미만인 경우 제1종 근생을 선택해주세요."
+                    );
+                  }
+                }
                 setSelectedInfo({
                   mainCategory: selectedMainCategory,
                   subCategory: selectedSubCategory,
