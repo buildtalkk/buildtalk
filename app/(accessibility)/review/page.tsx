@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import Table from "@/components/Table";
 import BuildingInfoTr from "@/components/BuildingInfoTr";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, Loader2, Info } from "lucide-react";
 import useSessionStorageState from "use-session-storage-state";
 import { BuildingInfo, SelectedInfo } from "@/types";
@@ -62,10 +62,14 @@ const InputGroup = ({
   const selectTagStyle = twMerge(style, readonly ? "appearance-none" : "");
 
   const handleAreaChange: OnValueChange = ({ floatValue }) => {
-    // if (floatValue && totalArea && floatValue > totalArea) {
-    //   return setArea?.(totalArea);
-    // }
     setArea?.(floatValue ?? 0);
+  };
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleInputContainerClick = () => {
+    if (!readonly && inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   return (
@@ -162,6 +166,7 @@ const InputGroup = ({
               style,
               "flex items-center gap-4 justify-between"
             )}
+            onClick={handleInputContainerClick}
           >
             <NumericFormat
               value={area}
@@ -174,6 +179,7 @@ const InputGroup = ({
               displayType={readonly ? "text" : "input"}
               onValueChange={handleAreaChange}
               decimalScale={2}
+              getInputRef={inputRef}
             />
             {!readonly && totalArea && (
               <span className="text-xs text-primary-500">
