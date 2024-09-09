@@ -345,7 +345,7 @@ const ReviewPage = () => {
           </div>
           <div className={"my-8 flex flex-col"}>
             <Button
-              className={"w-1/4 mx-auto"}
+              className={"w-1/4 mx-auto min-w-[200px]"}
               disabled={!isValid}
               onClick={() => {
                 setSelectedInfo({
