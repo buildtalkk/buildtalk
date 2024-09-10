@@ -59,52 +59,55 @@ const ReportPage = () => {
 
   return (
     <div>
-      <p>분석 결과</p>
+      <h2 className={"font-bold"}>분석 결과</h2>
       <ul>
-        <li>용도지역: {reportResult.zoning.isPassed ? "통과" : "불통"}</li>
+        <li>1.용도지역: {reportResult.zoning.isPassed ? "통과" : "불통"}</li>
         <li>
-          면적 제한:{" "}
+          2.면적 제한:{" "}
           {reportResult.areaLimitations.isPassed
             ? "통과"
             : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`}
         </li>
         <li>
-          주차장:{" "}
+          3.주차장:{" "}
           {reportResult.parking.isException
             ? 0
             : reportResult.parking.requiredParkingSpace}
           대
+          {reportResult.parking.isException && (
+            <p>* 사용승인 후 5년이 지난 연면적 1,000㎡ 미만 건축물에 해당함</p>
+          )}
         </li>
-        <h3>[장애인 편의시설]</h3>
+        <h3>4.장애인 편의시설</h3>
         <li>
-          주출입구 접근:{" "}
+          - 주출입구 접근:{" "}
           {reportResult.accessibility.mainEntranceAccess
             ? "검토필요"
             : "검토필요x"}
         </li>
         <li>
-          장애인 주차구역:{" "}
+          - 장애인 주차구역:{" "}
           {reportResult.accessibility.accessibleParkingSpaces
             ? "검토필요"
             : "검토필요x"}
         </li>
         <li>
-          주출입구 높이차이:{" "}
+          - 주출입구 높이차이:{" "}
           {reportResult.accessibility.mainEntranceHeightDifference
             ? "검토필요"
             : "검토필요x"}
         </li>
         <li>
-          출입구:{" "}
+          - 출입구:{" "}
           {reportResult.accessibility.entrances ? "검토필요" : "검토필요x"}
         </li>
-        <h3>[소방]</h3>
+        <h3>5.소방</h3>
         <li>
-          다중이용업소:{" "}
+          - 다중이용업소:{" "}
           {reportResult.fire.isMultiUserBusiness ? "해당" : "비해당"}
         </li>
         <li>
-          특정소방대상물:{" "}
+          - 특정소방대상물:{" "}
           {reportResult.fire.isSpecialFireFacility ? "해당" : "비해당"}
         </li>
       </ul>
