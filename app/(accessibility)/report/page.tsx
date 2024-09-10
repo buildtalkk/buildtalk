@@ -1,61 +1,34 @@
 "use client";
 import useSessionStorageState from "use-session-storage-state";
-import { SelectedInfo } from "@/types";
+import { BuildingInfo, ReportResult, SelectedInfo } from "@/types";
+import { Loader2 } from "lucide-react";
+import {
+  getAreaLimitations,
+  getFacilityRequirements,
+  getFireRequirements,
+  getParking,
+} from "@/utils/get-report-result";
 
-type ReportResult = {
-  zoning: {
-    isPassed: boolean;
-  };
-  areaLimitations: {
-    isPassed: boolean;
-    message: string;
-  };
-  parking: {
-    requiredParkingSpace: number;
-    isException: boolean;
-  };
-  accessibility: {
-    mainEntranceAccess: boolean;
-    accessibleParkingSpaces: boolean;
-    mainEntranceHeightDifference: boolean;
-    entrances: boolean;
-  };
-  fire: {
-    isMultiUserBusiness: boolean;
-    isSpecialFireFacility: boolean;
-  };
-};
-
-const getReportResult = (selectedInfo: SelectedInfo): ReportResult => {
+const getReportResult = (
+  selectedInfo: SelectedInfo,
+  buildingInfo: BuildingInfo,
+  floorInfo: any
+): ReportResult => {
   return {
     // 1.용도지역: 근생1,2만 하기 때문에 일단 모두 통과임
     zoning: {
       isPassed: true,
     },
     /* 2.면적 제한:  용도별 건축물 종류: 안내 문구에 띄울 수 있도록 (면적 m2이상/미만) 충족여부 불리언으로 표시 */
-    areaLimitations: {
-      isPassed: true,
-      message: "",
-    },
+    areaLimitations: getAreaLimitations(selectedInfo),
     // 3.주차장: 주차 몇대 필요한지 숫자 + 예외상황 해당 유무
-    parking: {
-      requiredParkingSpace: 0,
-      isException: false, // true이면 예외상황으로 주차가 필요없음
-    },
+    parking: getParking(selectedInfo, buildingInfo),
     // 4.장애인 편의시설
-    accessibility: {
-      mainEntranceAccess: true,
-      accessibleParkingSpaces: true,
-      mainEntranceHeightDifference: true,
-      entrances: true,
-    },
+    accessibility: getFacilityRequirements(selectedInfo),
     // 5.소방
     // 소방1: 일단 휴게음식점만 구현. (지상층 && 100㎡이상 || 지하층 && 66㎡이상)
     // 소방2: 용도로 하는건데, 모든 근린생활시설이 특정소방대상물임
-    fire: {
-      isMultiUserBusiness: true, // 소방1 조건 충족 여부
-      isSpecialFireFacility: true, // 특정소방대상물 여부(근생은 모두 특정소방대상물임)
-    },
+    fire: getFireRequirements(selectedInfo, floorInfo),
   };
 };
 
@@ -63,18 +36,78 @@ const ReportPage = () => {
   const [selectedInfo] = useSessionStorageState<SelectedInfo | undefined>(
     "selectedInfo"
   );
+  const [buildingInfo] = useSessionStorageState<BuildingInfo | undefined>(
+    "buildingInfo"
+  );
+  const [floorInfo] = useSessionStorageState("floorInfo");
 
-  if (!selectedInfo) {
-    return <div>분석 결과가 없습니다.</div>;
+  if (!selectedInfo || !buildingInfo || !floorInfo) {
+    return (
+      <section
+        id="howItWorks"
+        className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
+      >
+        <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
+        <p className="mt-4">현재 리포트를</p>
+        <p>생성하고 있습니다</p>
+      </section>
+    );
   }
 
-  const reportResult = getReportResult(selectedInfo);
-  // TODO: 분석 결과를 가져오는 함수 로직 작성
+  const reportResult = getReportResult(selectedInfo, buildingInfo, floorInfo);
+  console.log("=====> 계산된 결과", reportResult);
 
   return (
     <div>
       <p>분석 결과</p>
-      {/* TODO: 화면에 모든 결과 뿌리기 */}
+      <ul>
+        <li>용도지역: {reportResult.zoning.isPassed ? "통과" : "불통"}</li>
+        <li>
+          면적 제한:{" "}
+          {reportResult.areaLimitations.isPassed
+            ? "통과"
+            : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`}
+        </li>
+        <li>
+          주차장:{" "}
+          {reportResult.parking.isException
+            ? 0
+            : reportResult.parking.requiredParkingSpace}
+          대
+        </li>
+        <h3>[장애인 편의시설]</h3>
+        <li>
+          주출입구 접근:{" "}
+          {reportResult.accessibility.mainEntranceAccess
+            ? "검토필요"
+            : "검토필요x"}
+        </li>
+        <li>
+          장애인 주차구역:{" "}
+          {reportResult.accessibility.accessibleParkingSpaces
+            ? "검토필요"
+            : "검토필요x"}
+        </li>
+        <li>
+          주출입구 높이차이:{" "}
+          {reportResult.accessibility.mainEntranceHeightDifference
+            ? "검토필요"
+            : "검토필요x"}
+        </li>
+        <li>
+          출입구:{" "}
+          {reportResult.accessibility.entrances ? "검토필요" : "검토필요x"}
+        </li>
+        <h3>[소방]</h3>
+        <li>
+          다중이용업소:{" "}
+          {reportResult.fire.isMultiUserBusiness ? "해당" : "비해당"}
+        </li>
+        <li>
+          특정소방대상물:{" "}
+          {reportResult.fire.isSpecialFireFacility ? "해당" : "비해당"}
+        </li>
+      </ul>
     </div>
   );
 };

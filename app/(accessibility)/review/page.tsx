@@ -6,7 +6,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronRight, Loader2, Info } from "lucide-react";
 import useSessionStorageState from "use-session-storage-state";
-import { BuildingInfo, SelectedInfo } from "@/types";
+import {
+  BuildingInfo,
+  MainCategories,
+  SelectedInfo,
+  SubCategories1,
+  SubCategories2,
+} from "@/types";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
@@ -14,24 +20,12 @@ import { OnValueChange } from "react-number-format/types/types";
 
 const categories = [
   {
-    main: "제1종 근린생활시설",
-    sub: ["소매점 등", "휴게음식점, 제과점 등", "사무소 등"],
+    main: MainCategories.First,
+    sub: Object.values(SubCategories1),
   },
   {
-    main: "제2종 근린생활시설",
-    sub: [
-      "공연장",
-      "종교집회장",
-      "휴게음식점",
-      "일반음식점",
-      "동물병원, 동물미용실",
-      "학원, 교습소 등",
-      "독서실",
-      "테니스장, 체력단련장, 골프연습장 등",
-      "사무소 등",
-      "청소년게임제공업소, 복합유통게임제공업소, 인터넷컴퓨터게임시설제공업소, 가상현실체험 제공업소",
-      "노래연습장",
-    ],
+    main: MainCategories.Second,
+    sub: Object.values(SubCategories2),
   },
 ];
 
@@ -360,7 +354,7 @@ const ReviewPage = () => {
                 /* 예외 처리: 휴게음식점 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
                 if (selectedSubCategory.includes("휴게음식점")) {
                   if (
-                    selectedMainCategory === "제1종 근린생활시설" &&
+                    selectedMainCategory === MainCategories.First &&
                     (area ?? 0) >= 300
                   ) {
                     return alert(
@@ -368,7 +362,7 @@ const ReviewPage = () => {
                     );
                   }
                   if (
-                    selectedMainCategory === "제2종 근린생활시설" &&
+                    selectedMainCategory === MainCategories.Second &&
                     (area ?? 0) < 300
                   ) {
                     return alert(

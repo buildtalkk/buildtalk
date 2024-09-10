@@ -160,6 +160,8 @@ const ResultPage = () => {
     mechanicalParking: `옥내 ${titleItem.indrMechUtcnt}대 / 옥외 ${titleItem.oudrMechUtcnt}대`,
     selfParking: `옥내 ${titleItem.indrAutoUtcnt}대 / 옥외 ${titleItem.oudrAutoUtcnt}대`,
     sewageTreatmentFacility: get오수정화시설(WclfItem),
+    authorizationDate: titleItem.useAprDay, // 사용승인일
+    totalFloorArea: titleItem.totArea, // 연면적
   };
 
   return (
