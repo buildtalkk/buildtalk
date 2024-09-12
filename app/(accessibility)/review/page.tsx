@@ -360,14 +360,14 @@ const ReviewPage = () => {
                 if (floorInfo.area < (area ?? 0)) {
                   return alert("입력한 면적이 현재 층의 면적보다 큽니다.");
                 }
-                /* 예외 처리: 사무실 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
-                if (selectedSubCategory.includes("사무실")) {
+                /* 예외 처리: 사무소 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
+                if (selectedSubCategory.includes("사무소")) {
                   if (
                     selectedMainCategory === MainCategories.First &&
                     (area ?? 0) >= 30
                   ) {
                     return alert(
-                      "사무실의 면적에 따른 근생을 선택해주세요. 30m² 이상인 경우 제2종 근생을 선택해주세요."
+                      "사무소의 면적에 따른 근생을 선택해주세요. 30m² 이상인 경우 제2종 근생을 선택해주세요."
                     );
                   }
                   if (
@@ -375,7 +375,7 @@ const ReviewPage = () => {
                     (area ?? 0) < 30
                   ) {
                     return alert(
-                      "사무실의 면적에 따른 근생을 선택해주세요. 30m² 미만인 경우 제1종 근생을 선택해주세요."
+                      "사무소의 면적에 따른 근생을 선택해주세요. 30m² 미만인 경우 제1종 근생을 선택해주세요."
                     );
                   }
                 }
