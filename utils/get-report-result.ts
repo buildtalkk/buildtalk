@@ -52,9 +52,9 @@ export const getAreaLimitations = (
   /* 2종 */
   if (mainCategory === MainCategories.Second) {
     switch (subCategory) {
-      case SubCategories2.PerformanceHall:
-      case SubCategories2.ReligiousGatheringPlace:
-      case SubCategories2.AcademyAndCramSchool:
+      // case SubCategories2.PerformanceHall:
+      // case SubCategories2.ReligiousGatheringPlace:
+      // case SubCategories2.AcademyAndCramSchool:
       case SubCategories2.TennisCourtAndGym:
       case SubCategories2.Office:
       case SubCategories2.YouthGameFacility:
@@ -63,7 +63,7 @@ export const getAreaLimitations = (
         return checkAreaLimit(area, 300, ComparisonTerms.GreaterThanOrEqualTo);
       /* 제한없음 */
       case SubCategories2.GeneralFoodAndBeverage:
-      case SubCategories2.AnimalHospitalAndGroomingSalon:
+      // case SubCategories2.AnimalHospitalAndGroomingSalon:
       case SubCategories2.StudyRoom:
       case SubCategories2.KaraokeRoom:
         return { isPassed: true };
@@ -103,13 +103,13 @@ export const getParking = (
   // 사용승인 후 5년이 지난 연면적 1,000㎡ 미만 건축물의 용도변경(and 조건 사용승인일 기준 5년이 지났고, 1000m2 미만일경우 )
   const { authorizationDate, totalFloorArea } = buildingInfo;
 
-  // 주차 필요 대수 계산(135㎡당 1대, 반올림, 1대 미만일 경우 1대로 처리)
+  // 주차 필요 대수 계산(135㎡당 1대, 반올림, 1대 미만일 경우 0대로 처리)
   const isException =
     checkApprovalDatePassed5Years(authorizationDate) && totalFloorArea < 1000;
   const requiredParkingSpace = Math.round(selectedInfo.area / 135);
 
   return {
-    requiredParkingSpace: requiredParkingSpace < 1 ? 1 : requiredParkingSpace,
+    requiredParkingSpace: requiredParkingSpace < 1 ? 0 : requiredParkingSpace,
     isException, // 예외상황이면 주차가 필요없음
   };
 };
@@ -168,9 +168,16 @@ export const getFireRequirements = (
   const { subCategory, area } = selectedInfo;
   const areaStandard = flrGbCdNm === "지하" ? 66 : 100;
 
+  /* isMultiUserBusiness */
+  /* 1. 노래연습장, 게임제공업 무조건 해당 */
+  /* 2. 휴게음식점 조건부 해당 */
+  /* 3. 나머지는 무조건 비해당(학원 포함) */
+
   return {
     isMultiUserBusiness:
-      subCategory.includes("휴게음식점") && area > areaStandard,
+      subCategory === SubCategories2.YouthGameFacility ||
+      subCategory === SubCategories2.KaraokeRoom ||
+      (subCategory.includes("휴게음식점") && area > areaStandard),
     isSpecialFireFacility: true, // 특정소방대상물 여부(근생은 모두 특정소방대상물임)
   };
 };

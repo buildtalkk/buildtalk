@@ -64,11 +64,11 @@ export enum SubCategories1 {
 
 export enum SubCategories2 {
   /* 2종 */
-  PerformanceHall = "공연장",
-  ReligiousGatheringPlace = "종교집회장",
+  // PerformanceHall = "공연장",
+  // ReligiousGatheringPlace = "종교집회장",
   FoodAndBeverage = "휴게음식점",
   GeneralFoodAndBeverage = "일반음식점",
-  AnimalHospitalAndGroomingSalon = "동물병원, 동물미용실",
+  // AnimalHospitalAndGroomingSalon = "동물병원, 동물미용실",
   AcademyAndCramSchool = "학원, 교습소 등",
   StudyRoom = "독서실",
   TennisCourtAndGym = "테니스장, 체력단련장, 골프연습장 등",

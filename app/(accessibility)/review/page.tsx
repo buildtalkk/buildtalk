@@ -167,9 +167,18 @@ const InputGroup = ({
               className={
                 "appearance-none bg-transparent border-none text-gray-700 p-0 leading-tight focus:outline-none text-xs"
               }
+              isAllowed={values => {
+                const { floatValue } = values;
+                if (floatValue === undefined || !totalArea) {
+                  return true;
+                }
+                if (floatValue < 0) {
+                  return false;
+                }
+                return floatValue < totalArea;
+              }}
               thousandSeparator=","
               suffix="m²"
-              max={totalArea}
               displayType={readonly ? "text" : "input"}
               onValueChange={handleAreaChange}
               decimalScale={2}
@@ -351,6 +360,25 @@ const ReviewPage = () => {
                 if (floorInfo.area < (area ?? 0)) {
                   return alert("입력한 면적이 현재 층의 면적보다 큽니다.");
                 }
+                /* 예외 처리: 사무실 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
+                if (selectedSubCategory.includes("사무실")) {
+                  if (
+                    selectedMainCategory === MainCategories.First &&
+                    (area ?? 0) >= 30
+                  ) {
+                    return alert(
+                      "사무실의 면적에 따른 근생을 선택해주세요. 30m² 이상인 경우 제2종 근생을 선택해주세요."
+                    );
+                  }
+                  if (
+                    selectedMainCategory === MainCategories.Second &&
+                    (area ?? 0) < 30
+                  ) {
+                    return alert(
+                      "사무실의 면적에 따른 근생을 선택해주세요. 30m² 미만인 경우 제1종 근생을 선택해주세요."
+                    );
+                  }
+                }
                 /* 예외 처리: 휴게음식점 - 면적에 따른 올바른 근생 선택 여부 토스트 띄우기 */
                 if (selectedSubCategory.includes("휴게음식점")) {
                   if (
@@ -392,7 +420,7 @@ const ReviewPage = () => {
       </div>
       <div
         className={
-          "flex flex-col items-start w-fit mx-auto text-gray-400 text-sm mt-2"
+          "flex flex-col items-center w-fit mx-auto text-gray-400 text-sm mt-2"
         }
       >
         <p>* 본 서비스는 상업용 부동산을 대상으로 제공됩니다.</p>
