@@ -175,7 +175,7 @@ const InputGroup = ({
                 if (floatValue < 0) {
                   return false;
                 }
-                return floatValue < totalArea;
+                return floatValue <= totalArea;
               }}
               thousandSeparator=","
               suffix="m²"

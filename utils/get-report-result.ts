@@ -106,10 +106,11 @@ export const getParking = (
   // 주차 필요 대수 계산(135㎡당 1대, 반올림, 1대 미만일 경우 0대로 처리)
   const isException =
     checkApprovalDatePassed5Years(authorizationDate) && totalFloorArea < 1000;
-  const requiredParkingSpace = Math.round(selectedInfo.area / 135);
+  const requiredParkingSpace = selectedInfo.area / 135;
 
   return {
-    requiredParkingSpace: requiredParkingSpace < 1 ? 0 : requiredParkingSpace,
+    requiredParkingSpace:
+      requiredParkingSpace < 1 ? 0 : Math.round(requiredParkingSpace),
     isException, // 예외상황이면 주차가 필요없음
   };
 };
