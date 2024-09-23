@@ -1,12 +1,7 @@
 "use client";
 import useSessionStorageState from "use-session-storage-state";
-import {
-  BuildingInfo,
-  MainCategories,
-  ReportResult,
-  SelectedInfo,
-} from "@/types";
-import { ChevronRight, Info, Loader2 } from "lucide-react";
+import { BuildingInfo, ReportResult, SelectedInfo } from "@/types";
+import { Check, CircleCheck, Loader2 } from "lucide-react";
 import {
   getAreaLimitations,
   getFacilityRequirements,
@@ -15,12 +10,97 @@ import {
 } from "@/utils/get-report-result";
 import BuildingInfoTr from "@/components/BuildingInfoTr";
 import Table from "@/components/Table";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import ContactLink from "@/components/ContactLink";
 import { useEffect, useState } from "react";
 import CardHeader from "@/components/CardHeader";
 import { twMerge } from "tailwind-merge";
+
+const ProgressItem = (props: {
+  title: string;
+  content: string[];
+  isActivated: boolean;
+  hasNext: boolean;
+  onCompleted?: () => void;
+}) => {
+  const [currentItem, setCurrentItem] = useState("");
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [index, setIndex] = useState(0);
+  const { hasNext, title, content, isActivated, onCompleted } = props;
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isActivated) {
+      interval = setInterval(() => {
+        if (index < content.length) {
+          setCurrentItem(content[index]);
+          setIndex(prevIndex => prevIndex + 1);
+        } else {
+          interval && clearInterval(interval);
+          onCompleted?.();
+          setIsCompleted(true);
+        }
+      }, 500);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [index, content, onCompleted, isActivated]);
+
+  const textColorStyle =
+    isActivated || isCompleted ? "text-black" : "text-gray-400";
+
+  return (
+    <div className={"flex justify-start items-center h-8"}>
+      <span className="relative flex h-2 w-2 mr-3">
+        {/* pulse */}
+        <span
+          data-active={isActivated}
+          className={`data-[active=false]:hidden absolute animate-ping inline-flex h-full w-full rounded-full bg-primary-400 opacity-75`}
+        />
+        {/* line */}
+        {hasNext && (
+          <span
+            className={
+              "absolute left-[50%] top-0 w-[1px] h-8 bg-gray-200 -translate-x-[0.5px]"
+            }
+          />
+        )}
+        {/* dot */}
+        <span
+          data-active={isActivated}
+          className="relative inline-flex rounded-full h-2 w-2 bg-primary-500 data-[active=false]:bg-white data-[active=false]:border-2"
+        />
+        {/*  completed check */}
+        {isCompleted && (
+          <span
+            className={
+              "absolute top-0 left-0 h-2 w-2 bg-primary-500 rounded-full"
+            }
+          >
+            <Check className={"absolute top-0 left-0 h-2 w-2 text-white"} />
+          </span>
+        )}
+      </span>
+      <span
+        className={twMerge("flex justify-start text-start", textColorStyle)}
+      >
+        <span className={"text-base min-w-[150px] font-bold"}>{title}</span>
+        <span className={""}>
+          {content.map(c => (
+            <span
+              key={c}
+              className={`absolute text-base line-clamp-1 transition-opacity ${c === currentItem ? "opacity-100" : "opacity-0"} duration-300 ease-in`}
+            >
+              {c + (isActivated ? " 검색중..." : "")}
+            </span>
+          ))}
+        </span>
+      </span>
+    </div>
+  );
+};
 
 type ReportItemProps = {
   count: number;
@@ -63,7 +143,7 @@ const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
         </span>
       </div>
       {description && (
-        <ul className={"list-disc pl-5"}>
+        <ul className={"list-disc pl-5 line-clamp-1"}>
           <li className="text-sm">{description}</li>
         </ul>
       )}
@@ -104,16 +184,18 @@ const ReportPage = () => {
     "buildingInfo"
   );
   const [floorInfo] = useSessionStorageState("floorInfo");
-  const [inProgress, setInProgress] = useState<boolean>(true);
+  const [step, setStep] = useState<
+    "initial" | "animation1" | "animation2" | "animation3" | "completed"
+  >("initial");
 
   useEffect(() => {
-    const id = setTimeout(() => {
-      setInProgress(false);
-    }, PROGRESS_TIME);
-
-    return () => {
-      clearTimeout(id);
-    };
+    // const id = setTimeout(() => {
+    //   setInProgress(false);
+    // }, PROGRESS_TIME);
+    // return () => {
+    //   clearTimeout(id);
+    // };
+    setStep("animation1");
   }, []);
 
   if (!selectedInfo || !buildingInfo || !floorInfo) {
@@ -194,18 +276,50 @@ const ReportPage = () => {
         </tbody>
       </Table>
 
-      <div
-        id={"report-progress-card"}
-        className="border rounded-lg divide-y divide-gray-200 min-w-full"
-      >
-        <CardHeader title={inProgress ? "검토중" : "검토완료"} />
-        {/* animation */}
+      <div id={"report-progress-card"} className="border rounded-lg min-w-full">
+        <CardHeader title={step !== "completed" ? "검토중" : "검토완료"} />
+        <ul className={"px-6 mb-4"}>
+          <ProgressItem
+            title={"용도 지역 검토"}
+            isActivated={step === "animation1"}
+            content={[
+              "국토의 계획 및 이용에 관한 법률",
+              "제주특별자치도 도시계획 조례",
+            ]}
+            hasNext
+            onCompleted={() => {
+              setStep("animation2");
+            }}
+          />
+          <ProgressItem
+            title={"건축물 용도 검토"}
+            isActivated={step === "animation2"}
+            content={["건축법", "제주특별자치도건축조례"]}
+            hasNext
+            onCompleted={() => {
+              setStep("animation3");
+            }}
+          />
+          <ProgressItem
+            title={"기타 관련 법규 검토"}
+            isActivated={step === "animation3"}
+            content={[
+              "주차장법",
+              "제주시 주차장조례",
+              "장애인 노인 임산부 등의 편의증진 보장에 관한 법률",
+            ]}
+            hasNext={false}
+            onCompleted={() => {
+              setStep("completed");
+            }}
+          />
+        </ul>
       </div>
 
       <div id={"report-result-card"} className="border rounded-lg min-w-full">
         <CardHeader title={"검토결과"} />
         <div className={"w-full flex justify-center mt-10"}>
-          <ul className={"divide-y divide-slate-200 w-full mx-20"}>
+          <ul className={"divide-y divide-slate-200 w-full mx-4 sm:mx-20"}>
             <ReportItem
               count={1}
               title={"용도지역"}
