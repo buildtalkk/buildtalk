@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import ContactLink from "@/components/ContactLink";
 import { useEffect, useState } from "react";
 import CardHeader from "@/components/CardHeader";
+import { twMerge } from "tailwind-merge";
 
 type ReportItemProps = {
   count: number;
@@ -28,17 +29,44 @@ type ReportItemProps = {
   result: "가능" | "불가능" | "검토필요";
 };
 
+const getFontColor = (result: "가능" | "불가능" | "검토필요") => {
+  switch (result) {
+    case "가능":
+      return "text-primary-500";
+    case "불가능":
+      return "text-red-500";
+    case "검토필요":
+      return "text-green-500";
+  }
+};
+
 const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
   return (
-    <div className={"flex min-h-16 justify-between"}>
-      <div>
-        <div className="flex items-center">
-          <span className="text-lg">{count}</span>
-          <span className="text-lg ml-2">{title}</span>
-        </div>
-        <span className="text-sm">{description}</span>
+    <div className={"flex flex-col min-h-24 items-start py-5"}>
+      <div className="flex items-center gap-4 w-full">
+        <span className="text-base font-bold">
+          {count}
+          {". "}
+          {title}
+        </span>
+        <span
+          className="flex-1 h-[2px]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgb(107, 114, 128) 1px, transparent 1px)",
+            backgroundSize: "4px 8px",
+            backgroundPosition: "0 center",
+          }}
+        />
+        <span className={twMerge(getFontColor(result), "font-bold")}>
+          {result}
+        </span>
       </div>
-      <div>{result}</div>
+      {description && (
+        <ul className={"list-disc pl-5"}>
+          <li className="text-sm">{description}</li>
+        </ul>
+      )}
     </div>
   );
 };
@@ -129,8 +157,8 @@ const ReportPage = () => {
     .map(([key, value]) => getKoreanTerm(key));
 
   return (
-    <>
-      <Table title="건축물 현황" className="mb-10">
+    <div className={"flex flex-col gap-10"}>
+      <Table title="건축물 현황" className="">
         <thead className="bg-gray-50">
           <tr>
             <th
@@ -176,12 +204,12 @@ const ReportPage = () => {
 
       <div id={"report-result-card"} className="border rounded-lg min-w-full">
         <CardHeader title={"검토결과"} />
-        <div className={"w-full flex justify-center"}>
-          <ul className={"divide-y divide-slate-200 w-4/5"}>
+        <div className={"w-full flex justify-center mt-10"}>
+          <ul className={"divide-y divide-slate-200 w-full mx-20"}>
             <ReportItem
               count={1}
               title={"용도지역"}
-              description={""}
+              description={"해당 사항 없음"}
               result={reportResult.zoning.isPassed ? "가능" : "불가능"}
             />
             <ReportItem
@@ -189,7 +217,7 @@ const ReportPage = () => {
               title={"면적 제한"}
               description={
                 reportResult.areaLimitations.isPassed
-                  ? ""
+                  ? "해당 사항 없음"
                   : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`
               }
               result={reportResult.areaLimitations.isPassed ? "가능" : "불가능"}
@@ -227,7 +255,6 @@ const ReportPage = () => {
           </ul>
         </div>
         <div className={"flex flex-col min-w-full"}>
-          <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto"></div>
           <div className={"my-8 flex flex-col"}>
             <Button
               className={"w-1/4 mx-auto min-w-[200px]"}
@@ -239,7 +266,7 @@ const ReportPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
