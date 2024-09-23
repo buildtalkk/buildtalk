@@ -1,13 +1,47 @@
 "use client";
 import useSessionStorageState from "use-session-storage-state";
-import { BuildingInfo, ReportResult, SelectedInfo } from "@/types";
-import { Loader2 } from "lucide-react";
+import {
+  BuildingInfo,
+  MainCategories,
+  ReportResult,
+  SelectedInfo,
+} from "@/types";
+import { ChevronRight, Info, Loader2 } from "lucide-react";
 import {
   getAreaLimitations,
   getFacilityRequirements,
   getFireRequirements,
   getParking,
 } from "@/utils/get-report-result";
+import BuildingInfoTr from "@/components/BuildingInfoTr";
+import Table from "@/components/Table";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import ContactLink from "@/components/ContactLink";
+import { useEffect, useState } from "react";
+import CardHeader from "@/components/CardHeader";
+
+type ReportItemProps = {
+  count: number;
+  title: string;
+  description: string;
+  result: "가능" | "불가능" | "검토필요";
+};
+
+const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
+  return (
+    <div className={"flex min-h-16 justify-between"}>
+      <div>
+        <div className="flex items-center">
+          <span className="text-lg">{count}</span>
+          <span className="text-lg ml-2">{title}</span>
+        </div>
+        <span className="text-sm">{description}</span>
+      </div>
+      <div>{result}</div>
+    </div>
+  );
+};
 
 const getReportResult = (
   selectedInfo: SelectedInfo,
@@ -32,6 +66,8 @@ const getReportResult = (
   };
 };
 
+const PROGRESS_TIME = 1000;
+
 const ReportPage = () => {
   const [selectedInfo] = useSessionStorageState<SelectedInfo | undefined>(
     "selectedInfo"
@@ -40,6 +76,17 @@ const ReportPage = () => {
     "buildingInfo"
   );
   const [floorInfo] = useSessionStorageState("floorInfo");
+  const [inProgress, setInProgress] = useState<boolean>(true);
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setInProgress(false);
+    }, PROGRESS_TIME);
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, []);
 
   if (!selectedInfo || !buildingInfo || !floorInfo) {
     return (
@@ -55,63 +102,144 @@ const ReportPage = () => {
   }
 
   const reportResult = getReportResult(selectedInfo, buildingInfo, floorInfo);
+  const { accessibility, fire } = reportResult;
   console.log("=====> 계산된 결과", reportResult);
 
+  const parkingResult = reportResult.parking.isException
+    ? 0
+    : reportResult.parking.requiredParkingSpace;
+
+  const getKoreanTerm = (key: string) => {
+    switch (key) {
+      case "mainEntranceAccess":
+        return "주출입구 접근";
+      case "accessibleParkingSpaces":
+        return "장애인 주차구역";
+      case "mainEntranceHeightDifference":
+        return "주출입구 높이차이";
+      case "entrances":
+        return "출입구";
+      default:
+        return "";
+    }
+  };
+
+  const accessibilityResult = Object.entries(accessibility)
+    .filter(([key, value]) => value)
+    .map(([key, value]) => getKoreanTerm(key));
+
   return (
-    <div>
-      <h2 className={"font-bold"}>분석 결과</h2>
-      <ul>
-        <li>1.용도지역: {reportResult.zoning.isPassed ? "통과" : "불통"}</li>
-        <li>
-          2.면적 제한:{" "}
-          {reportResult.areaLimitations.isPassed
-            ? "통과"
-            : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`}
-        </li>
-        <li>
-          3.주차장:{" "}
-          {reportResult.parking.isException
-            ? 0
-            : reportResult.parking.requiredParkingSpace}
-          대
-          {reportResult.parking.isException && (
-            <p>* 사용승인 후 5년이 지난 연면적 1,000㎡ 미만 건축물에 해당함</p>
-          )}
-        </li>
-        <h3>4.장애인 편의시설</h3>
-        <li>
-          - 주출입구 접근:{" "}
-          {reportResult.accessibility.mainEntranceAccess
-            ? "검토필요"
-            : "검토필요x"}
-        </li>
-        <li>
-          - 장애인 주차구역:{" "}
-          {reportResult.accessibility.accessibleParkingSpaces
-            ? "검토필요"
-            : "검토필요x"}
-        </li>
-        <li>
-          - 주출입구 높이차이:{" "}
-          {reportResult.accessibility.mainEntranceHeightDifference
-            ? "검토필요"
-            : "검토필요x"}
-        </li>
-        <li>
-          - 출입구:{" "}
-          {reportResult.accessibility.entrances ? "검토필요" : "검토필요x"}
-        </li>
-        <h3>5.소방</h3>
-        <li>
-          - 다중이용업소:{" "}
-          {reportResult.fire.isMultiUserBusiness ? "해당" : "비해당"}
-        </li>
-        <li>
-          - 특정소방대상물:{" "}
-          {reportResult.fire.isSpecialFireFacility ? "해당" : "비해당"}
-        </li>
-      </ul>
-    </div>
+    <>
+      <Table title="건축물 현황" className="mb-10">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              항목
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-2 text-start text-xs font-medium text-gray-500 uppercase"
+            >
+              내용
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+          <BuildingInfoTr title="주소" content={buildingInfo.address} />
+          <BuildingInfoTr title="용도지역" content={buildingInfo.usage} />
+          <BuildingInfoTr
+            title="기계식주차"
+            content={buildingInfo.mechanicalParking}
+          />
+          <BuildingInfoTr
+            title="자주식주차"
+            content={buildingInfo.selfParking}
+          />
+          <BuildingInfoTr
+            title="오수정화시설 (형식/용량)"
+            content={buildingInfo.sewageTreatmentFacility}
+            comment={" *시,군,구청 확인 필요"}
+          />
+        </tbody>
+      </Table>
+
+      <div
+        id={"report-progress-card"}
+        className="border rounded-lg divide-y divide-gray-200 min-w-full"
+      >
+        <CardHeader title={inProgress ? "검토중" : "검토완료"} />
+        {/* animation */}
+      </div>
+
+      <div id={"report-result-card"} className="border rounded-lg min-w-full">
+        <CardHeader title={"검토결과"} />
+        <div className={"w-full flex justify-center"}>
+          <ul className={"divide-y divide-slate-200 w-4/5"}>
+            <ReportItem
+              count={1}
+              title={"용도지역"}
+              description={""}
+              result={reportResult.zoning.isPassed ? "가능" : "불가능"}
+            />
+            <ReportItem
+              count={2}
+              title={"면적 제한"}
+              description={
+                reportResult.areaLimitations.isPassed
+                  ? ""
+                  : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`
+              }
+              result={reportResult.areaLimitations.isPassed ? "가능" : "불가능"}
+            />
+            <ReportItem
+              count={3}
+              title={"주차장"}
+              description={
+                parkingResult === 0
+                  ? "주차장 필요없음"
+                  : `${parkingResult}대 필요`
+              }
+              result={parkingResult === 0 ? "가능" : "검토필요"}
+            />
+            <ReportItem
+              count={4}
+              title={"장애인 편의시설"}
+              description={accessibilityResult.join(", ")}
+              result={
+                Object.values(reportResult.accessibility).some(value => value)
+                  ? "검토필요"
+                  : "가능"
+              }
+            />
+            <ReportItem
+              count={5}
+              title={"소방"}
+              description={`다중이용업소 ${fire.isMultiUserBusiness ? "해당" : "비해당"}, 특정소방대상물 ${fire.isSpecialFireFacility ? "해당" : "비해당"}`}
+              result={
+                fire.isMultiUserBusiness || fire.isSpecialFireFacility
+                  ? "검토필요"
+                  : "가능"
+              }
+            />
+          </ul>
+        </div>
+        <div className={"flex flex-col min-w-full"}>
+          <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto"></div>
+          <div className={"my-8 flex flex-col"}>
+            <Button
+              className={"w-1/4 mx-auto min-w-[200px]"}
+              onClick={() => {}}
+            >
+              <span>전문 건축사 상담하기</span>
+            </Button>
+            <ContactLink />
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

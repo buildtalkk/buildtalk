@@ -17,6 +17,8 @@ import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { NumericFormat } from "react-number-format";
 import { OnValueChange } from "react-number-format/types/types";
+import ContactLink from "@/components/ContactLink";
+import CardHeader from "@/components/CardHeader";
 
 const categories = [
   {
@@ -292,15 +294,18 @@ const ReviewPage = () => {
           />
         </tbody>
       </Table>
-      <div className="border rounded-lg divide-y divide-gray-200 min-w-full">
-        <header className="py-3 px-4 flex items-center justify-start">
-          <div className={"flex items-end"}>
-            <h2 className="text-lg font-bold text-gray-800">용도변경</h2>
+      <div
+        id={"review-card"}
+        className="border rounded-lg divide-y divide-gray-200 min-w-full"
+      >
+        <CardHeader
+          title={"용도변경"}
+          Icon={
             <Link className={"ml-1.5 mb-1"} href={"/change"} target={"_blank"}>
               <Info size={12} />
             </Link>
-          </div>
-        </header>
+          }
+        />
 
         <div className={"flex flex-col min-w-full"}>
           <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto">
@@ -408,13 +413,7 @@ const ReviewPage = () => {
             >
               <span>검토 리포트 생성하기</span>
             </Button>
-            <Link
-              href="https://naver.com"
-              className="text-sm text-gray-600 underline text-center mt-2"
-              target={"_blank"}
-            >
-              용도 분류를 모르시겠나요? 전문가에게 문의주세요.
-            </Link>
+            <ContactLink />
           </div>
         </div>
       </div>
