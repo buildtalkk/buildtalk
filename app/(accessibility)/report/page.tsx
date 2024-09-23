@@ -23,7 +23,7 @@ const ProgressItem = (props: {
   hasNext: boolean;
   onCompleted?: () => void;
 }) => {
-  const [currentItem, setCurrentItem] = useState("");
+  const [currentItem, setCurrentItem] = useState(props.content[0]);
   const [isCompleted, setIsCompleted] = useState(false);
   const [index, setIndex] = useState(0);
   const { hasNext, title, content, isActivated, onCompleted } = props;
@@ -40,7 +40,7 @@ const ProgressItem = (props: {
           onCompleted?.();
           setIsCompleted(true);
         }
-      }, 500);
+      }, 700);
     }
 
     return () => {
@@ -86,12 +86,18 @@ const ProgressItem = (props: {
       <span
         className={twMerge("flex justify-start text-start", textColorStyle)}
       >
-        <span className={"text-base min-w-[150px] font-bold"}>{title}</span>
+        <span
+          className={
+            "transition text-sm min-w-[150px] font-semibold duration-300 ease-in"
+          }
+        >
+          {title}
+        </span>
         <span className={""}>
           {content.map(c => (
             <span
               key={c}
-              className={`absolute text-base line-clamp-1 transition-opacity ${c === currentItem ? "opacity-100" : "opacity-0"} duration-300 ease-in`}
+              className={`absolute text-sm line-clamp-1 transition-opacity ${c === currentItem ? "opacity-100" : "opacity-0"} duration-300 ease-in`}
             >
               {c + (isActivated ? " 검색중..." : "")}
             </span>
@@ -118,6 +124,23 @@ const getFontColor = (result: "가능" | "불가능" | "검토필요") => {
     case "검토필요":
       return "text-green-500";
   }
+};
+
+const Skeleton = () => {
+  return (
+    <div className="animate-pulse flex space-x-4 m-4">
+      <div className="flex-1 space-y-6 py-1">
+        <div className="h-2 bg-slate-500 rounded-sm"></div>
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="h-2 bg-slate-500 rounded-sm col-span-2"></div>
+            <div className="h-2 bg-slate-500 rounded-sm col-span-1"></div>
+          </div>
+          <div className="h-2 bg-slate-500 rounded-sm"></div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
@@ -318,67 +341,74 @@ const ReportPage = () => {
 
       <div id={"report-result-card"} className="border rounded-lg min-w-full">
         <CardHeader title={"검토결과"} />
-        <div className={"w-full flex justify-center mt-10"}>
-          <ul className={"divide-y divide-slate-200 w-full mx-4 sm:mx-20"}>
-            <ReportItem
-              count={1}
-              title={"용도지역"}
-              description={"해당 사항 없음"}
-              result={reportResult.zoning.isPassed ? "가능" : "불가능"}
-            />
-            <ReportItem
-              count={2}
-              title={"면적 제한"}
-              description={
-                reportResult.areaLimitations.isPassed
-                  ? "해당 사항 없음"
-                  : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`
-              }
-              result={reportResult.areaLimitations.isPassed ? "가능" : "불가능"}
-            />
-            <ReportItem
-              count={3}
-              title={"주차장"}
-              description={
-                parkingResult === 0
-                  ? "주차장 필요없음"
-                  : `${parkingResult}대 필요`
-              }
-              result={parkingResult === 0 ? "가능" : "검토필요"}
-            />
-            <ReportItem
-              count={4}
-              title={"장애인 편의시설"}
-              description={accessibilityResult.join(", ")}
-              result={
-                Object.values(reportResult.accessibility).some(value => value)
-                  ? "검토필요"
-                  : "가능"
-              }
-            />
-            <ReportItem
-              count={5}
-              title={"소방"}
-              description={`다중이용업소 ${fire.isMultiUserBusiness ? "해당" : "비해당"}, 특정소방대상물 ${fire.isSpecialFireFacility ? "해당" : "비해당"}`}
-              result={
-                fire.isMultiUserBusiness || fire.isSpecialFireFacility
-                  ? "검토필요"
-                  : "가능"
-              }
-            />
-          </ul>
-        </div>
-        <div className={"flex flex-col min-w-full"}>
-          <div className={"my-8 flex flex-col"}>
-            <Button
-              className={"w-1/4 mx-auto min-w-[200px]"}
-              onClick={() => {}}
-            >
-              <span>전문 건축사 상담하기</span>
-            </Button>
-            <ContactLink />
+        {step !== "completed" && <Skeleton />}
+        {step === "completed" && (
+          <div className={`w-full flex justify-center mt-10`}>
+            <ul className={"divide-y divide-slate-200 w-full mx-4 sm:mx-20"}>
+              <ReportItem
+                count={1}
+                title={"용도지역"}
+                description={"해당 사항 없음"}
+                result={reportResult.zoning.isPassed ? "가능" : "불가능"}
+              />
+              <ReportItem
+                count={2}
+                title={"면적 제한"}
+                description={
+                  reportResult.areaLimitations.isPassed
+                    ? "해당 사항 없음"
+                    : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`
+                }
+                result={
+                  reportResult.areaLimitations.isPassed ? "가능" : "불가능"
+                }
+              />
+              <ReportItem
+                count={3}
+                title={"주차장"}
+                description={
+                  parkingResult === 0
+                    ? "주차장 필요없음"
+                    : `${parkingResult}대 필요`
+                }
+                result={parkingResult === 0 ? "가능" : "검토필요"}
+              />
+              <ReportItem
+                count={4}
+                title={"장애인 편의시설"}
+                description={accessibilityResult.join(", ")}
+                result={
+                  Object.values(reportResult.accessibility).some(value => value)
+                    ? "검토필요"
+                    : "가능"
+                }
+              />
+              <ReportItem
+                count={5}
+                title={"소방"}
+                description={`다중이용업소 ${fire.isMultiUserBusiness ? "해당" : "비해당"}, 특정소방대상물 ${fire.isSpecialFireFacility ? "해당" : "비해당"}`}
+                result={
+                  fire.isMultiUserBusiness || fire.isSpecialFireFacility
+                    ? "검토필요"
+                    : "가능"
+                }
+              />
+            </ul>
           </div>
-        </div>
+        )}
+        {step === "completed" && (
+          <div className={"flex flex-col min-w-full"}>
+            <div className={"my-8 flex flex-col"}>
+              <Button
+                className={"w-1/4 mx-auto min-w-[200px]"}
+                onClick={() => {}}
+              >
+                <span>전문 건축사 상담하기</span>
+              </Button>
+              <ContactLink />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
