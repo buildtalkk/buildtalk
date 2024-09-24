@@ -220,8 +220,6 @@ const ReportPage = () => {
         className="container text-center py-12 sm:py-16  min-h-80 flex justify-center items-center flex-col"
       >
         <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
-        <p className="mt-4">현재 리포트를</p>
-        <p>생성하고 있습니다</p>
       </section>
     );
   }
