@@ -1,7 +1,7 @@
 "use client";
 import useSessionStorageState from "use-session-storage-state";
 import { BuildingInfo, ReportResult, SelectedInfo } from "@/types";
-import { Check, CircleCheck, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import {
   getAreaLimitations,
   getFacilityRequirements,
@@ -197,8 +197,6 @@ const getReportResult = (
   };
 };
 
-const PROGRESS_TIME = 1000;
-
 const ReportPage = () => {
   const [selectedInfo] = useSessionStorageState<SelectedInfo | undefined>(
     "selectedInfo"
@@ -212,12 +210,6 @@ const ReportPage = () => {
   >("initial");
 
   useEffect(() => {
-    // const id = setTimeout(() => {
-    //   setInProgress(false);
-    // }, PROGRESS_TIME);
-    // return () => {
-    //   clearTimeout(id);
-    // };
     setStep("animation1");
   }, []);
 
@@ -236,7 +228,6 @@ const ReportPage = () => {
 
   const reportResult = getReportResult(selectedInfo, buildingInfo, floorInfo);
   const { accessibility, fire } = reportResult;
-  console.log("=====> 계산된 결과", reportResult);
 
   const parkingResult = reportResult.parking.isException
     ? 0
