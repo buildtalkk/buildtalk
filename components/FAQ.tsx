@@ -14,7 +14,7 @@ interface FAQProps {
 
 const FAQList: FAQProps[] = [
   {
-    question: "빌드톡은 무슨 서비스인가요?",
+    question: "빌드톡은 어떤 서비스인가요?",
     answer:
       "빌드톡은 건축 인허가 절차를 간소화하여, 필요한 서류와 절차를 한눈에 확인할 수 있도록 도와드립니다. ",
     value: "item-1",
