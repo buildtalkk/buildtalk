@@ -111,7 +111,7 @@ const ProgressItem = (props: {
 type ReportItemProps = {
   count: number;
   title: string;
-  description: string;
+  descriptions?: string[];
   result: "가능" | "불가능" | "검토필요";
 };
 
@@ -143,7 +143,12 @@ const Skeleton = () => {
   );
 };
 
-const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
+const ReportItem = ({
+  count,
+  title,
+  descriptions,
+  result,
+}: ReportItemProps) => {
   return (
     <div className={"flex flex-col min-h-24 items-start py-5"}>
       <div className="flex items-center gap-4 w-full">
@@ -165,9 +170,13 @@ const ReportItem = ({ count, title, description, result }: ReportItemProps) => {
           {result}
         </span>
       </div>
-      {description && (
-        <ul className={"list-disc pl-5 line-clamp-1"}>
-          <li className="text-sm">{description}</li>
+      {descriptions?.length && (
+        <ul className={"list-disc pl-5"}>
+          {descriptions.map(description => (
+            <li key={description} className="text-sm">
+              <span className="line-clamp-1">{description}</span>
+            </li>
+          ))}
         </ul>
       )}
     </div>
@@ -337,17 +346,17 @@ const ReportPage = () => {
               <ReportItem
                 count={1}
                 title={"용도지역"}
-                description={"해당 사항 없음"}
+                descriptions={["해당 사항 없음"]}
                 result={reportResult.zoning.isPassed ? "가능" : "불가능"}
               />
               <ReportItem
                 count={2}
                 title={"면적 제한"}
-                description={
+                descriptions={[
                   reportResult.areaLimitations.isPassed
                     ? "해당 사항 없음"
-                    : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`
-                }
+                    : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`,
+                ]}
                 result={
                   reportResult.areaLimitations.isPassed ? "가능" : "불가능"
                 }
@@ -355,17 +364,24 @@ const ReportPage = () => {
               <ReportItem
                 count={3}
                 title={"주차장"}
-                description={
+                descriptions={[
                   parkingResult === 0
                     ? "주차장 필요없음"
-                    : `${parkingResult}대 필요`
-                }
+                    : `${parkingResult}대 필요`,
+                ]}
                 result={parkingResult === 0 ? "가능" : "검토필요"}
               />
               <ReportItem
                 count={4}
                 title={"장애인 편의시설"}
-                description={accessibilityResult.join(", ")}
+                descriptions={
+                  Object.values(reportResult.accessibility).some(value => value)
+                    ? [
+                        accessibilityResult.join(", ") +
+                          "에 대한 현황조사가 필요하고 이에 대한 여러검토가 필요합니다.",
+                      ]
+                    : ["해당사항 없습니다."]
+                }
                 result={
                   Object.values(reportResult.accessibility).some(value => value)
                     ? "검토필요"
@@ -375,30 +391,40 @@ const ReportPage = () => {
               <ReportItem
                 count={5}
                 title={"소방"}
-                description={`다중이용업소 ${fire.isMultiUserBusiness ? "해당" : "비해당"}, 특정소방대상물 ${fire.isSpecialFireFacility ? "해당" : "비해당"}`}
+                descriptions={[
+                  `다중이용업소 ${fire.isMultiUserBusiness ? "해당" : "비해당"}`,
+                  `특정소방대상물 ${fire.isSpecialFireFacility ? "해당" : "비해당"}`,
+                ]}
                 result={
                   fire.isMultiUserBusiness || fire.isSpecialFireFacility
                     ? "검토필요"
                     : "가능"
                 }
               />
+              <div className={"w-full flex justify-start py-5"}>
+                <span className={"text-xs text-gray-600 text-start"}>
+                  * 주무관청과 용도변경 협의 과정에서 일부 추가 관련 법률 검토가
+                  필요할 수 있습니다.
+                </span>
+              </div>
             </ul>
           </div>
         )}
-        {step === "completed" && (
-          <div className={"flex flex-col min-w-full"}>
-            <div className={"my-8 flex flex-col"}>
-              <Button
-                className={"w-1/4 mx-auto min-w-[200px]"}
-                onClick={() => {}}
-              >
-                <span>전문 건축사 상담하기</span>
-              </Button>
-              <ContactLink />
-            </div>
-          </div>
-        )}
       </div>
+
+      {step === "completed" && (
+        <div className={"flex flex-col min-w-full"}>
+          <div className={"my-8 flex flex-col"}>
+            <Button
+              className={"w-1/4 mx-auto min-w-[200px]"}
+              onClick={() => {}}
+            >
+              <span>전문 건축사 상담하기</span>
+            </Button>
+            <ContactLink />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
