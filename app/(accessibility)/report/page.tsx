@@ -410,20 +410,21 @@ const ReportPage = () => {
             </ul>
           </div>
         )}
-        {step === "completed" && (
-          <div className={"flex flex-col min-w-full"}>
-            <div className={"my-8 flex flex-col"}>
-              <Button
-                className={"w-1/4 mx-auto min-w-[200px]"}
-                onClick={() => {}}
-              >
-                <span>전문 건축사 상담하기</span>
-              </Button>
-              <ContactLink />
-            </div>
-          </div>
-        )}
       </div>
+
+      {step === "completed" && (
+        <div className={"flex flex-col min-w-full"}>
+          <div className={"my-8 flex flex-col"}>
+            <Button
+              className={"w-1/4 mx-auto min-w-[200px]"}
+              onClick={() => {}}
+            >
+              <span>전문 건축사 상담하기</span>
+            </Button>
+            <ContactLink />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
