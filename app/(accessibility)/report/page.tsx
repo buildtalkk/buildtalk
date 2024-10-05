@@ -401,6 +401,12 @@ const ReportPage = () => {
                     : "가능"
                 }
               />
+              <div className={"w-full flex justify-start py-5"}>
+                <span className={"text-xs text-gray-600 text-start"}>
+                  * 주무관청과 용도변경 협의 과정에서 일부 추가 관련 법률 검토가
+                  필요할 수 있습니다.
+                </span>
+              </div>
             </ul>
           </div>
         )}
