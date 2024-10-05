@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { NotionRenderer } from 'react-notion-x';
+import { NotionRenderer } from "react-notion-x";
 import { Collection } from "react-notion-x/build/third-party/collection";
 import { Modal } from "react-notion-x/build/third-party/modal";
 // const notion = new NotionAPI();
@@ -17,14 +17,12 @@ export const Renderer = ({ recordMap, rootPageId }: RendererProps) => {
     <div className="notion__container">
       {/* <Link href="/">헤더 뒤로가기</Link> */}
       <NotionRenderer
-      disableHeader
-      mapPageUrl={(pageId) => `/about/${pageId}`}
-
-      components={{
-        Collection,
-        Modal,
-
-      }}
+        disableHeader
+        mapPageUrl={pageId => `/about/${pageId}`}
+        components={{
+          Collection,
+          Modal,
+        }}
         recordMap={recordMap}
         fullPage={true}
         darkMode={false}
@@ -57,4 +55,4 @@ export const Renderer = ({ recordMap, rootPageId }: RendererProps) => {
 //   };
 // }
 
-  export default Renderer;
+export default Renderer;

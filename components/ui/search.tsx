@@ -21,7 +21,7 @@ export function Search() {
   }, [search.length]);
 
   useEffect(() => {
-    searchAddress(debouncedSearch).then((jusos) => {
+    searchAddress(debouncedSearch).then(jusos => {
       setCurrentIndex(0);
       console.log("jusos", jusos);
       if (jusos && jusos.length > 0) {
@@ -72,17 +72,17 @@ export function Search() {
           id="search"
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => {
+          onChange={e => setSearch(e.target.value)}
+          onKeyDown={e => {
             if (e.key === "ArrowDown") {
               e.preventDefault();
               if (currentIndex < searchResults.length - 1) {
-                setCurrentIndex((prev) => prev + 1);
+                setCurrentIndex(prev => prev + 1);
               }
             } else if (e.key === "ArrowUp") {
               e.preventDefault();
               if (currentIndex > 0) {
-                setCurrentIndex((prev) => prev - 1);
+                setCurrentIndex(prev => prev - 1);
               }
             } else if (e.key === "Enter") {
               e.preventDefault();

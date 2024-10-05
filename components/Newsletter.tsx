@@ -38,7 +38,7 @@ export const Newsletter = () => {
             className="bg-muted/50 dark:bg-muted/80 "
             aria-label="email"
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={e => setValue(e.target.value)}
           />
           <Button
             disabled={loading}
