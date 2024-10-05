@@ -54,7 +54,7 @@ export function Search() {
     searchParams.set("lnbrSlno", juso.lnbrSlno);
 
     router.push(`/result?${searchParams.toString()}`);
-    handleClear();
+    setSearchResults([]);
   };
 
   const handleClear = () => {
@@ -106,22 +106,25 @@ export function Search() {
       </div>
 
       {/* result */}
-      <div className="absolute bg-white left-0 right-0 top-12 rounded  shadow-lg ">
+      <div className="absolute bg-white -left-1 -right-1 top-12 rounded  shadow-lg ">
         {searchResults.length > 0 ? (
           <div className="overflow-hidden py-1 text-foreground">
             {searchResults.map((juso, index) => (
               <div
                 key={juso.bdMgtSn}
                 className={twMerge(
-                  "flex items-center cursor-pointer hover:bg-primary-foreground hover:text-primary-background",
+                  "flex flex-col items-center cursor-pointer hover:bg-primary-foreground hover:text-primary-background transition py-3 px-4 text-left",
                   index !== searchResults.length - 1 && "border-b",
                   currentIndex === index &&
-                    "bg-primary-foreground text-primary-background"
+                    "bg-primary/10 text-primary-background"
                 )}
                 onClick={() => handleJuso(juso)}
               >
-                <span className="flex w-full rounded-md bg-transparent py-2 px-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50">
+                <span className="flex w-full rounded-md bg-transparent outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50">
                   {juso.jibunAddr}
+                </span>
+                <span className="text-sm flex w-full text-gray-400">
+                  {juso.roadAddrPart1}
                 </span>
               </div>
             ))}
