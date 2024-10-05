@@ -178,7 +178,7 @@ export const getFireRequirements = (
     isMultiUserBusiness:
       subCategory === SubCategories2.YouthGameFacility ||
       subCategory === SubCategories2.KaraokeRoom ||
-      (subCategory.includes("휴게음식점") && area > areaStandard),
+      (subCategory.includes("휴게음식점") && area >= areaStandard),
     isSpecialFireFacility: true, // 특정소방대상물 여부(근생은 모두 특정소방대상물임)
   };
 };
