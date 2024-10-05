@@ -3,7 +3,7 @@ import { Search } from "./ui/search";
 
 export const Hero = () => {
   return (
-    <section className="container place-items-center py-20 md:py-32 gap-10">
+    <section className="container place-items-center py-24 md:py-40 gap-10">
       <div className="text-center lg:text-start space-y-8 flex flex-col items-center z-10 relative">
         <main className="text-3xl md:text-5xl font-bold ">
           <h1 className="text-center font-bold">
