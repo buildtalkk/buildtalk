@@ -3,7 +3,7 @@ import Link from "next/link";
 const ContactLink = () => {
   return (
     <Link
-      href="https://naver.com"
+      href="https://pf.kakao.com/_xnYaqn"
       className="text-sm text-gray-600 underline text-center mt-2"
       target={"_blank"}
     >
