@@ -54,6 +54,7 @@ export function Search() {
     searchParams.set("lnbrSlno", juso.lnbrSlno);
 
     router.push(`/result?${searchParams.toString()}`);
+    handleClear();
   };
 
   const handleClear = () => {
