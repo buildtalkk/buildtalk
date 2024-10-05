@@ -22,7 +22,7 @@ export const Hero = () => {
             시작하세요!
           </p>
 
-          <p className="text-sm text-muted-foreground/70">
+          <p className="text-xs text-muted-foreground/70">
             *현재 빌드톡은 연면적 3,000m<sup>2</sup> 미만 건물에 대한 서비스를
             제공하고 있습니다.
           </p>
