@@ -16,13 +16,13 @@ export const Hero = () => {
         </div>
 
         <div>
-          <p className="text-xl text-muted-foreground mb-2">
+          <p className="text-xl text-muted-foreground mb-2 text-center">
             부동산 용도변경의 모든 것을{" "}
             <span className="text-primary font-semibold">빌드톡</span>과 함께
             시작하세요!
           </p>
 
-          <p className="text-xs text-muted-foreground/70">
+          <p className="text-xs text-muted-foreground/70 text-center">
             *현재 빌드톡은 연면적 3,000m<sup>2</sup> 미만 건물에 대한 서비스를
             제공하고 있습니다.
           </p>
