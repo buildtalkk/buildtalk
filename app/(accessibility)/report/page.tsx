@@ -1,7 +1,12 @@
 "use client";
 import useSessionStorageState from "use-session-storage-state";
-import { BuildingInfo, ReportResult, SelectedInfo } from "@/types";
-import { Check, Loader2 } from "lucide-react";
+import {
+  BuildingInfo,
+  MainCategories,
+  ReportResult,
+  SelectedInfo,
+} from "@/types";
+import { Check, ChevronRight, Info, Loader2 } from "lucide-react";
 import {
   getAreaLimitations,
   getFacilityRequirements,
@@ -15,6 +20,8 @@ import ContactLink from "@/components/ContactLink";
 import { useEffect, useState } from "react";
 import CardHeader from "@/components/CardHeader";
 import { twMerge } from "tailwind-merge";
+import Link from "next/link";
+import { InputGroup } from "@/components/InputGroup";
 
 const ProgressItem = (props: {
   title: string;
@@ -213,7 +220,7 @@ const ReportPage = () => {
   const [buildingInfo] = useSessionStorageState<BuildingInfo | undefined>(
     "buildingInfo"
   );
-  const [floorInfo] = useSessionStorageState("floorInfo");
+  const [floorInfo] = useSessionStorageState<any>("floorInfo");
   const [step, setStep] = useState<
     "initial" | "animation1" | "animation2" | "animation3" | "completed"
   >("initial");
@@ -296,6 +303,70 @@ const ReportPage = () => {
           />
         </tbody>
       </Table>
+
+      <div
+        id={"review-card"}
+        className="border rounded-lg divide-y divide-gray-200 min-w-full"
+      >
+        <CardHeader
+          title={"용도변경"}
+          Icon={
+            <Link className={"ml-1.5 mb-1"} href={"/change"} target={"_blank"}>
+              <Info size={12} />
+            </Link>
+          }
+        />
+
+        <div className={"flex flex-col min-w-full"}>
+          <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto">
+            <section id={"Label Group"} className={"h-full flex gap-4"}>
+              <p className="text-sm w-20 h-8 flex items-center justify-start font-bold text-gray-800">
+                {floorInfo.flrGbCdNm} {floorInfo.flrNo}층
+              </p>
+              <div className={"flex flex-col justify-start space-y-2"}>
+                <label className="text-sm w-20 h-8 flex items-center justify-start">
+                  건축물 용도
+                </label>
+                {/* NOTE: 대분류, 소분류 두줄 됐을때 필요한  */}
+                <div className={"lg:hidden block w-20 h-8"} />
+                {/* NOTE: 띄어쓰기 때문에 whitespace-pre-wrap 적용 */}
+                <label className="text-sm w-20 h-8 flex items-center justify-start whitespace-pre-wrap">
+                  {"면           적"}
+                </label>
+              </div>
+            </section>
+            <form className="flex flex-row items-center w-full">
+              <InputGroup
+                selectedMainCategory={floorInfo.etcPurps}
+                title={
+                  <h3 className="text-sm md:text-md font-bold mb-2 text-[#797979]">
+                    <span>용도변경 전</span>
+                    <span className={"hidden md:inline"}>(현재)</span>
+                  </h3>
+                }
+                selectedSubCategory={floorInfo.mainPurpsCdNm}
+                area={floorInfo.area}
+                readonly
+              />
+              <div className={"p-6"}>
+                <ChevronRight className="text-blue-500" size={20} />
+              </div>
+              <InputGroup
+                title={
+                  <h3 className="text-sm md:text-md font-bold mb-2">
+                    용도변경 후
+                  </h3>
+                }
+                selectedMainCategory={selectedInfo.mainCategory}
+                selectedSubCategory={selectedInfo.subCategory}
+                area={selectedInfo.area}
+                totalArea={buildingInfo.totalFloorArea}
+                readonly
+              />
+            </form>
+          </div>
+        </div>
+      </div>
 
       <div id={"report-progress-card"} className="border rounded-lg min-w-full">
         <CardHeader title={step !== "completed" ? "검토중" : "검토완료"} />
