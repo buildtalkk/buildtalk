@@ -22,6 +22,7 @@ import CardHeader from "@/components/CardHeader";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { InputGroup } from "@/components/InputGroup";
+import { useRouter } from "next/navigation";
 
 const ProgressItem = (props: {
   title: string;
@@ -133,19 +134,19 @@ const getFontColor = (result: "가능" | "불가능" | "검토필요") => {
   }
 };
 
-const Skeleton = () => {
+const ReportItemSkeleton = () => {
   return (
-    <div className="animate-pulse flex space-x-4 m-4">
-      <div className="flex-1 space-y-6 py-1">
-        <div className="h-2 bg-slate-500 rounded-sm"></div>
-        <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="h-2 bg-slate-500 rounded-sm col-span-2"></div>
-            <div className="h-2 bg-slate-500 rounded-sm col-span-1"></div>
-          </div>
-          <div className="h-2 bg-slate-500 rounded-sm"></div>
-        </div>
+    <div className="flex flex-col min-h-20 items-start py-4 animate-pulse">
+      <div className="flex items-center gap-4 w-full">
+        <div className="h-6 bg-gray-200 rounded w-3/4 max-w-[300px]"></div>
+        <span className="flex-1 h-[2px] bg-gray-200" />
+        <div className="h-6 bg-gray-200 rounded w-16"></div>
       </div>
+      <ul className="mt-3 w-full">
+        <li className="mt-2">
+          <div className="h-4 bg-gray-200 rounded w-3/8"></div>
+        </li>
+      </ul>
     </div>
   );
 };
@@ -225,6 +226,7 @@ const ReportPage = () => {
     "initial" | "animation1" | "animation2" | "animation3" | "completed"
   >("initial");
 
+  const router = useRouter();
   useEffect(() => {
     setStep("animation1");
   }, []);
@@ -410,7 +412,15 @@ const ReportPage = () => {
 
       <div id={"report-result-card"} className="border rounded-lg min-w-full">
         <CardHeader title={"검토결과"} />
-        {step !== "completed" && <Skeleton />}
+        {step !== "completed" && (
+          <div className={`w-full flex justify-center mt-10 mb-10`}>
+            <ul className={"divide-y divide-slate-200 w-full mx-4 sm:mx-20"}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <ReportItemSkeleton key={index} />
+              ))}
+            </ul>
+          </div>
+        )}
         {step === "completed" && (
           <div className={`w-full flex justify-center mt-10`}>
             <ul className={"divide-y divide-slate-200 w-full mx-4 sm:mx-20"}>
@@ -483,19 +493,20 @@ const ReportPage = () => {
         )}
       </div>
 
-      {step === "completed" && (
-        <div className={"flex flex-col min-w-full"}>
-          <div className={"my-8 flex flex-col"}>
-            <Button
-              className={"w-1/4 mx-auto min-w-[200px]"}
-              onClick={() => {}}
-            >
-              <span>전문 건축사 상담하기</span>
-            </Button>
-            <ContactLink />
-          </div>
+      <div className={"flex flex-col min-w-full"}>
+        <div className={"my-8 flex flex-col"}>
+          <Button
+            className={"w-1/4 mx-auto min-w-[200px]"}
+            onClick={() => {
+              router.push("https://pf.kakao.com/_xnYaqn");
+            }}
+            disabled={step !== "completed"}
+          >
+            <span>전문 건축사 상담하기</span>
+          </Button>
+          <ContactLink />
         </div>
-      )}
+      </div>
     </div>
   );
 };
