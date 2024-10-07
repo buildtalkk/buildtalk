@@ -25,6 +25,7 @@ interface InputGroupProps {
   area?: number;
   setArea?: (area: number) => void;
   totalArea?: number;
+  showRemainingArea?: boolean;
 }
 
 export const InputGroup = ({
@@ -37,6 +38,7 @@ export const InputGroup = ({
   area,
   setArea,
   totalArea,
+  showRemainingArea = false,
 }: InputGroupProps) => {
   const style = `border border-primary-500 rounded px-2 py-1 text-sm w-full h-8 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus-visible:outline-none`;
   const selectTagStyle = twMerge(style, readonly ? "appearance-none" : "");
@@ -170,7 +172,7 @@ export const InputGroup = ({
               decimalScale={2}
               getInputRef={inputRef}
             />
-            {!readonly && totalArea && (
+            {showRemainingArea && totalArea && (
               <span className="text-xs text-primary-500">
                 남은 면적 : {(totalArea - (area ?? 0)).toFixed(2)}m²
               </span>

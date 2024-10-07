@@ -310,14 +310,7 @@ const ReportPage = () => {
         id={"review-card"}
         className="border rounded-lg divide-y divide-gray-200 min-w-full"
       >
-        <CardHeader
-          title={"용도변경"}
-          Icon={
-            <Link className={"ml-1.5 mb-1"} href={"/change"} target={"_blank"}>
-              <Info size={12} />
-            </Link>
-          }
-        />
+        <CardHeader title={"용도변경"} />
 
         <div className={"flex flex-col min-w-full"}>
           <div className="flex flex-row items-start py-10 px-12 mt-10 gap-8 overflow-x-auto">
@@ -362,7 +355,8 @@ const ReportPage = () => {
                 selectedMainCategory={selectedInfo.mainCategory}
                 selectedSubCategory={selectedInfo.subCategory}
                 area={selectedInfo.area}
-                totalArea={buildingInfo.totalFloorArea}
+                totalArea={floorInfo.area}
+                showRemainingArea
                 readonly
               />
             </form>

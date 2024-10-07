@@ -168,6 +168,7 @@ const ReviewPage = () => {
                 area={area}
                 setArea={setArea}
                 totalArea={floorInfo.area}
+                showRemainingArea
               />
             </form>
           </div>
