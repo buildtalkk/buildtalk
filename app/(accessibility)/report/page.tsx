@@ -179,7 +179,7 @@ const ReportItem = ({
         </span>
       </div>
       {descriptions?.length && (
-        <ul className={"list-disc pl-5"}>
+        <ul className={"list-disc pl-5 space-y-1 mt-2"}>
           {descriptions.map(description => (
             <li key={description} className="text-sm">
               <span className="line-clamp-1">{description}</span>
@@ -421,7 +421,9 @@ const ReportPage = () => {
               <ReportItem
                 count={1}
                 title={"용도지역"}
-                descriptions={["해당 사항 없음"]}
+                descriptions={[
+                  `${selectedInfo.mainCategory}의 용도지역 검토결과 해당 건축물 용도는 설치 가능합니다.`,
+                ]}
                 result={reportResult.zoning.isPassed ? "가능" : "불가능"}
               />
               <ReportItem
@@ -429,8 +431,8 @@ const ReportPage = () => {
                 title={"면적 제한"}
                 descriptions={[
                   reportResult.areaLimitations.isPassed
-                    ? "해당 사항 없음"
-                    : `${reportResult.areaLimitations.limit?.amount}㎡ ${reportResult.areaLimitations.limit?.comparisonTerms}`,
+                    ? `${selectedInfo.subCategory} 용도 건축물 면적 제한 검토결과 해당 건축물 용도는 설치 가능합니다.`
+                    : "현재단계에서는 나올수 있는 조건이 없음",
                 ]}
                 result={
                   reportResult.areaLimitations.isPassed ? "가능" : "불가능"
@@ -441,27 +443,22 @@ const ReportPage = () => {
                 title={"주차장"}
                 descriptions={[
                   parkingResult === 0
-                    ? "주차장 필요없음"
-                    : `${parkingResult}대 필요`,
+                    ? reportResult.parking.isException
+                      ? "사용승인 완료 5년이상, 1,000m2 미만의 용도변경이기 때문에 주차장 설치는 불필요 합니다."
+                      : "용도변경으로 인한 필요주차대수가 1대 미만의 용도변경이기 때문에 주차장 설치는 불필요 합니다."
+                    : `용도변경으로 인한 필요 주차대수가 ${parkingResult}대 이상이기 때문에 부설주차장에 대한 현황 및 주차장 증설 가능 여부 등 추가적인 검토가 필요합니다.`,
                 ]}
                 result={parkingResult === 0 ? "가능" : "검토필요"}
               />
               <ReportItem
                 count={4}
                 title={"장애인 편의시설"}
-                descriptions={
-                  Object.values(reportResult.accessibility).some(value => value)
-                    ? [
-                        accessibilityResult.join(", ") +
-                          "에 대한 현황조사가 필요하고 이에 대한 여러검토가 필요합니다.",
-                      ]
-                    : ["해당사항 없습니다."]
-                }
-                result={
-                  Object.values(reportResult.accessibility).some(value => value)
-                    ? "검토필요"
-                    : "가능"
-                }
+                descriptions={[
+                  accessibilityResult.length > 0
+                    ? `해당 용도변경으로로 인해 필요한 편의시설의 종류는 ${accessibilityResult.join(", ")} 입니다. 이에 대한 현황조사 및 추가 검토가 필요합니다.`
+                    : "해당 용도변경으로 인해 추가설치가 필요한 편의시설은 없습니다.",
+                ]}
+                result={accessibilityResult.length > 0 ? "검토필요" : "가능"}
               />
               <ReportItem
                 count={5}
@@ -476,7 +473,7 @@ const ReportPage = () => {
                     : "가능"
                 }
               />
-              <div className={"w-full flex justify-start py-5"}>
+              <div className={"w-full flex justify-start py-6 pb-10"}>
                 <span className={"text-xs text-gray-600 text-start"}>
                   * 주무관청과 용도변경 협의 과정에서 일부 추가 관련 법률 검토가
                   필요할 수 있습니다.
